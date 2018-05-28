@@ -10,11 +10,21 @@ The NIKHEF Project 2018 was supervised by Daniel Hynds, who codeveloped [Corryvr
 ## Introduction
 Data analysis in student projects (be it individually or as a group) usually result in code that is rather specific for that project. Other students who later continue with a similar project will typically start their own work from scratch and at most borrow snippets of code from the previous group. For students, this is not, of course, necessarily a problem, as you learn best by doing. Still, it would be great if problems that previous groups encountered can be optimally communicated to whoever later picks up on their work.
 
-This framework not only tries to address this 'continuity problem', but also offers a model to efficiently develop code for beam data analysis as a group. The idea is that a data analysis procedure can be split up into several algorithms, like reading data files, recognising tracks, and aligning your detectors. Similarly, information in a beam event can be split up into different data containers, like calorimeter data or measurements from a TPC. The form of these algorithms and containers are specific to each project, but the general procedure is still the same: data is processed in several steps of a procedure.
+This framework not only tries to address this 'continuity problem', but also offers a model to efficiently develop code for beam data analysis as a group. The idea is that a procedure where data is analyised event-by-event can be split up into several algorithms, like reading data files, recognising tracks, and aligning your detectors. Similarly, information in a beam event can be split up into different data containers, like calorimeter data or measurements from a TPC. The form of these algorithms and containers are specific to each project, but the general procedure is still the same: data is processed in several steps of a procedure.
 
-This invites the idea of using a virtual base class for data objects and algorithms. Steps in the data analysis procedures are written in the form of a class that inherits from this virtual base algorithm class and data containers in the form of classes that inherit from the data object base class. These algorithms can then be loaded by an analysis class that reads, processes, and writes data objects from a clipboard. A crude scheme of the main classes (with some example derived classes) is shown below.
+This invites the idea of using a virtual base class for data objects and algorithms. Steps in any data analysis procedure are written in the form of a class that inherits from this base algorithm class, while data containers are written in the form of classes that inherit from the data object base class. These algorithms can then be loaded by an analysis class that reads, processes, and writes data objects from a clipboard. A crude scheme of the main classes (with some example derived classes) is shown below.
 
-![Scheme of basic class structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_basic.png "Basic scheme of class structure")
+![Basic of class structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_basic.png "Basic scheme of class structure")
+
+## Description of class structure
+As can be seen above, there are four main components:
+1. **Core**: This consists of the class *TClipboard*, which is basically a map of pointers to data objects, and *TAnalysis*, which holds and runs the algorithms and manages reading and writing to the clipboard.
+2. **Objects**: When a bit of information of an event in your beam setup is described in the form of a class that inherits from TBeamObject, it can be written to the clipboard. Other algorithms can in turn access these objects through *TAnalysis* and use them in whatever way necessary.
+3. **Algorithms**: An algorithm is a step in your event analysis. As an algorithm inherits from *TAlgorithm*, it requires three methods that can be called by *TAnalysis*: Initialise (called once), Run (called for each event), and Finalise (called once at the end).
+4. **Global parameters**:
+These four components are contained withing **Steering**. This is just the main C++ function that defines the executable.
+
+Now, the cool thing is that, as long as an algorithm passes on passes data through the clipboard, it doesn't matter what other algorithms do with the output. This allows your group members (or students who later pick up your work) to add their own algorithms or switch off certain algorithms (steps) in the overall analysis procedure.
 
 ## Usage
 Compiling everything is done easily using `make`, which simply follows the Makefile script. You can then run the executable with `./execute`.
