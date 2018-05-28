@@ -14,7 +14,7 @@ This framework not only tries to address this 'continuity problem', but also off
 
 This invites the idea of using a virtual base class for data objects and algorithms. Steps in the data analysis procedures are written in the form of a class that inherits from this virtual base algorithm class and data containers in the form of classes that inherit from the data object base class. These algorithms can then be loaded by an analysis class that reads, processes, and writes data objects from a clipboard. A crude scheme of the main classes (with some example derived classes) is shown below.
 
-![Scheme of basic class structure](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Basic scheme of class structure")
+![Scheme of basic class structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_basic.png "Basic scheme of class structure")
 
 ## Usage
 Compiling everything is done easily using `make`, which simply follows the Makefile script. You can then run the executable with `./execute`.
