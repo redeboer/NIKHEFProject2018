@@ -64,7 +64,9 @@
 		TString name;
 		name.Form("%s_%u",timepix->GetName().Data(),timepix->GetTimestamp());
 		// Create graph of with correct number of points
-		fGraph = new TGraph2D( timepix->GetPixels()->size() );
+		if(timepix->GetPixels()->size()>0)
+			fGraph = new TGraph2D( timepix->GetPixels()->size() );
+		else fGraph = new TGraph2D();
 		fGraph->SetNameTitle(name.Data(),name.Data());
 		// Set points by looping over pixels in timepix
 		Int_t i=0;

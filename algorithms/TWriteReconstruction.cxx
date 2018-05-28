@@ -63,7 +63,8 @@
 		fTPC1pointsYZ  ->SetOption(pDrawHistoOption);
 		fTPC2pointsYZ  ->SetOption(pDrawHistoOption);
 		fTPC2energyYZ  ->SetOption(pDrawHistoOption);
-		fGraph = new TGraph2D(pTotalFiles);
+		if(pTotalFiles>0) fGraph = new TGraph2D(pTotalFiles);
+		else              fGraph = new TGraph2D();
 		fGraph->SetNameTitle("RecPoints","Reconstructed points;x (beam dir);y (transverse);z (drift dir)");
 	}
 

@@ -21,8 +21,6 @@ namespace NIKHEFProject {
 	// Character buffers
 	extern const Int_t pBufferSize;
 	extern Char_t pBuffer[];
-	// Simulation data or measurements?
-	extern Bool_t pSimulationData;
 	// Timepix file format
 	extern Bool_t pMatrixFormat;
 	extern UShort_t pNCols;
@@ -38,9 +36,10 @@ namespace NIKHEFProject {
 	extern UChar_t pMaxNFits;
 	extern UChar_t pMinClusterPixels;
 	// IO names
-	extern std::string pInputDirectory;
-	extern std::string pInputFileName;
-	extern std::string pOutputFileName;
+	extern Bool_t pSimulationData; // determined from input file name
+	extern TString pInput;
+	extern TString pOutput;
+	// Structural names
 	extern const char* pTreeName;
 	extern const char* pTreeTitle;
 	// Draw options
@@ -59,17 +58,21 @@ namespace NIKHEFProject {
 		extern Double_t pBeamEnergy;
 	}
 
-
-// === FUNCTIONS =======
-	extern void ReadCommandLineOptions(Int_t,char**);
-	extern void Help();
-	extern Double_t HoughTransform(Double_t,Double_t,Double_t);
+// === STRING FUNCTIONS =======
+	extern Bool_t SortString(std::string,std::string);
 	extern ULong64_t GetTimestamp(TString);
 	extern ULong64_t GetTimestamp(std::string);
-	extern Bool_t SortString(std::string,std::string);
+	extern TString FormatInputString(const char*);
+	extern TString FormatOutputString(const char*);
+
+// === INFO FUNCTIONS =======
+	extern void ReadCommandLineOptions(Int_t,char**);
+	extern void Help();
 	extern std::string GetTimeFormat(UInt_t);
 	extern void PrintTimeFormat(UInt_t);
-	// Mathematical
+
+// === MATHEMATICAL FUNCTIONS =======
+	extern Double_t HoughTransform(Double_t,Double_t,Double_t);
 	extern Int_t PowerOfTwo(Int_t);
 }
 

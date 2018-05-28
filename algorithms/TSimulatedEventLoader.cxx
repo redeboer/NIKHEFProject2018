@@ -19,13 +19,13 @@
 	void TSimulatedEventLoader::Initialise()
 	{
 		// Open filestream
-		string filename = pInputFileName;
+		string filename( pInput.Data() );
 		fFilestream.open(filename);
 		if(!fFilestream.is_open()) {
 			cout << "Simulation event file \"" << filename << "\" does not exist\n" << endl;
 			return;
 		}
-		cout << "Reading simulation event file \"" << pInputFileName << "\"";
+		cout << "Reading simulation event file \"" << pInput << "\"";
 		fFilestream.getline(pBuffer,pBufferSize);
 		if(fDebug) cout <<  " with format:" << endl << pBuffer << endl;
 		else cout << endl;

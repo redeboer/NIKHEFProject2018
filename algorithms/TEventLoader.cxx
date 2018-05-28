@@ -24,11 +24,11 @@
 	{
 
 		// Open the directory. This directory contains several txt files that contain the timepix data in either matrix or 3xN format
-		DIR* directory = opendir(pInputDirectory.c_str());
+		DIR* directory = opendir(pInput.Data());
 		if( directory==NULL ) {
-			if(fDebug) printf("Error: Directory \"%s\" does not exist",pInputDirectory.c_str());
+			if(fDebug) printf("Error: Directory \"%s\" does not exist",pInput.Data());
 			return;
-		} else printf("Reading events from directory \"%s\"\n",pInputDirectory.c_str());
+		} else printf("Reading events from directory \"%s\"\n",pInput.Data());
 
 		// Read the entries in the folder
 		dirent* entry;
@@ -63,7 +63,7 @@
 			// Get timepix names (for generating histograms/graphs)
 			timepixname1 = *fFileIterator;
 			timepixname2 = *fFileIterator;
-			TString filename1(pInputDirectory+"/"+*fFileIterator);
+			TString filename1(pInput+"/"+*fFileIterator);
 			++fFileIterator;
 			// Open file for cam 1
 			file1.open(filename1.Data());

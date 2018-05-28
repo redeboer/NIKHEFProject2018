@@ -38,7 +38,8 @@ public:
 	
 	// Constructors and destructors
 		TClipboard() {
-			fFile = new TFile(NIKHEFProject::pOutputFileName.c_str(), "RECREATE"); }
+			fFile = new TFile(NIKHEFProject::pOutput.Data(),"RECREATE");
+			std::cout << "Output will be written to \"" << NIKHEFProject::pOutput.Data() << "\"" << std::endl; }
 		virtual ~TClipboard() { fFile->Close(); };
 	// Modifiers
 		void Put(std::string, TBeamObjectList_t*);
