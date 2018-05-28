@@ -21,7 +21,8 @@ As can be seen above, there are four main components:
 1. **Core**: This consists of the class *TClipboard*, which is basically a map of pointers to data objects, and *TAnalysis*, which holds and runs the algorithms and manages reading and writing to the clipboard.
 2. **Objects**: When a bit of information of an event in your beam setup is described in the form of a class that inherits from TBeamObject, it can be written to the clipboard. Other algorithms can in turn access these objects through *TAnalysis* and use them in whatever way necessary.
 3. **Algorithms**: An algorithm is a step in your event analysis. As an algorithm inherits from *TAlgorithm*, it requires three methods that can be called by *TAnalysis*: Initialise (called once), Run (called for each event), and Finalise (called once at the end).
-4. **Global parameters**:
+4. **Global parameters**: This is no class, but a namespace called *NIKHEFProject*, as to make it more easily accessible to any component of the framework. It also contains a subnamespace *NIKHEFProject::Detector* that can be used to store for instance global positions of your detectors.
+
 These four components are contained withing **Steering**. This is just the main C++ function that defines the executable.
 
 Now, the cool thing is that, as long as an algorithm passes on passes data through the clipboard, it doesn't matter what other algorithms do with the output. This allows your group members (or students who later pick up your work) to add their own algorithms or switch off certain algorithms (steps) in the overall analysis procedure.
