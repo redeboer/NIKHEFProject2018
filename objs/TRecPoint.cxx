@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 23rd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION ======
 	This object describes the point where the proton probably scattered, including its energy loss. To be able to retrieve how it was reconstructed, pointers to the tracks that were used to reconstruct the it are also stored.

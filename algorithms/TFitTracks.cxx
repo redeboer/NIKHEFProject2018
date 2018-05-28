@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 22nd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This algorithm creates track objects for all clusters available in the clipboard. This is done through applying a linear fit (TLinearFitter) on the pixel data points associated to each cluster. See TTrack for how this information is stored.

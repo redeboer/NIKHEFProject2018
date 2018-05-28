@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 20th, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	An event loader is necessary for any analysis sequence. This event loader loads data from each detecter in each event and places that data on the clipboard for further analysis.

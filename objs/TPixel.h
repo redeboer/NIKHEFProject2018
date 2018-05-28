@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 20th, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This class describes all information of a pixel in a timepix.

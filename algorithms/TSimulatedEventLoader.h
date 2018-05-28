@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 23rd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	An event loader is necessary for any analysis sequence. This event loader loads data from a text file generated with a Geant simulation (text format to be determined by yourself).

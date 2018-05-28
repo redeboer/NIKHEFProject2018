@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 22nd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This class describes all features of a timepix (there are two at the moment of writing). Hit information is contained in the list of pixels (fPixels). This object can therefore also serve as a definition for a cluster of pixel data in a timepix (like a linear track).

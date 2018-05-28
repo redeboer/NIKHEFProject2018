@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 20th, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	The analysis class is the core class which allows the event processing to run. It contains a list of pointers to algorithms, each of which is (1) initialised, (2) run on each event, and (3) finalised. This class does not define what an event is, but merely runs each algorithm sequentially and passes the clipboard between them (erasing it at the end of each Run sequence).

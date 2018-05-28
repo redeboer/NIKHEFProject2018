@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 23rd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION ======
 	This object contains all relevant information of a calorimeter. (At this stage, that is only energy.)

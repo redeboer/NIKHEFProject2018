@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 22nd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION ======
 	This object describes a linear track in a TPC. It therefore contains a point of entry (fState) and a direction vector (fDirection), both with errors.

@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 20th, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	The Steering is effectively the executable of this analysis software frame. It can read command line parameters that will be passed to the parameters class.

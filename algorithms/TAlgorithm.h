@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 20th, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	The algorithm class is the base class that all user algorithms are built on. It allows the analysis class to hold algorithms of different types without knowing what they are and forces the user algorithms to have member functions Initialise, Run and Finalise. It also holds some basic tools, like the stopwatch for timing measurements.

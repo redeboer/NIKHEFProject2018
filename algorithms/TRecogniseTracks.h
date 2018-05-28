@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 22nd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This algorithm recognises tracks in all timepixes currently on the clipboard. The makes new timepixes (now called "clusters", but still of TTimepix object type) that contain only those pixels that lie in a straight line. Tracks are recognised using a 2D Hough transform.

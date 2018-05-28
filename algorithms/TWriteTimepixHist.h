@@ -1,6 +1,6 @@
 // Author: Remco de Boer
 // Date: May 22nd, 2018
-// Inspired by Corryvreckan
+// For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This algorithm writes all timepixes on the clipboard to the current (ROOT file) directory in the form of a 2D histogram.
