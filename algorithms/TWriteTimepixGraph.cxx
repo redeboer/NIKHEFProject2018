@@ -31,13 +31,13 @@
 			MakeGraph(*fTimepixIter);
 			fGraph->Write();
 			delete fGraph; // not written to clipboard so deleted asap
-			// Get list of clusters and loop over it to write them (if available)
+			// Write histograms of all clusters on clipboard
 			fClusterList = (TTimepixList_t*)fClipboard->Get((*fTimepixIter)->GetName()+"clusters");
 			fClusterIter = fClusterList->begin();
 			while( fClusterIter!=fClusterList->end() ) {
 				MakeGraph(*fClusterIter);
 				fGraph->Write();
-				delete fGraph;
+				delete fGraph; // not written to clipboard so deleted asap
 				++fClusterIter;
 			}
 			// on succesfull, set nodata bit
@@ -61,8 +61,7 @@
 // === PRIVATE FUNCTIONS =======
 	void TWriteTimepixGraph::MakeGraph(TTimepix* timepix) {
 		// Generate appropriate name and title
-		TString name;
-		name.Form("%s_%u",timepix->GetName().Data(),timepix->GetTimestamp());
+		TString name(timepix->GetName());
 		// Create graph of with correct number of points
 		if(timepix->GetPixels()->size()>0)
 			fGraph = new TGraph2D( timepix->GetPixels()->size() );

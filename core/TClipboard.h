@@ -12,6 +12,7 @@
 
 // === INCLUDES =======
 	#include "TFile.h"
+	#include "TSystem.h"
 	#include "TString.h"
 	#include <map>
 	#include <list>
@@ -38,6 +39,7 @@ public:
 	
 	// Constructors and destructors
 		TClipboard() {
+			gSystem->mkdir(NIKHEFProject::GetMotherPath(NIKHEFProject::pOutput));
 			fFile = new TFile(NIKHEFProject::pOutput.Data(),"RECREATE");
 			std::cout << "Output will be written to \"" << NIKHEFProject::pOutput.Data() << "\"" << std::endl; }
 		virtual ~TClipboard() { fFile->Close(); };

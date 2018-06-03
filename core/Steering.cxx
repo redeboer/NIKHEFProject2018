@@ -1,11 +1,11 @@
 // Author: Remco de Boer
-// Date: May 20th, 2018
+// Date: June 1st, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
-	The Steering is effectively the executable of this analysis software frame. It can read command line parameters that will be passed to the parameters class.
-	Steering initialises the three core objects: one parameters object, one clipboard object, and one analysis object. User algorithms are added to the analysis object so can be applied to each event during the run loop.
-	For parameter tweaking, see Global.cxx or parse arguments when executing.
+	The Steering is effectively the executable of this analysis software frame. It can read command line parameters (through a function in GlobalParameters.h) and pass these on to the parameters class.
+	Steering initialises the two core objects: one clipboard object and one analysis object. User algorithms are added to the analysis object so they will be applied to each event during the run loop.
+	For parameter tweaking, see GlobalParameters.cxx or parse arguments when executing.
 */
 
 // === INCLUDES =======
@@ -58,12 +58,12 @@ Int_t main(Int_t argc, char *argv[]) {
 	} else {
 		analysis->Add( new TEventLoader(clipboard,false) );
 		analysis->Add( new TRecogniseTracks(clipboard,false) );
-		// analysis->Add( new TWriteTimepixHist(clipboard,false) );
-		analysis->Add( new TWriteTimepixGraph(clipboard,false) );
+		analysis->Add( new TWriteTimepixHist(clipboard,false) );
+		// analysis->Add( new TWriteTimepixGraph(clipboard,false) );
 		analysis->Add( new TFitTracks(clipboard,false) );
 	}
 	analysis->Add( new TIntersectTracks(clipboard,false) );
-	analysis->Add( new TWriteReconstruction(clipboard,true) );
+	analysis->Add( new TWriteReconstruction(clipboard,false) );
 	/* -------------------------------------- */
 
 	// Run the analysis

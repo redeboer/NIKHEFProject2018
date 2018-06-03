@@ -1,10 +1,10 @@
 // Author: Remco de Boer
-// Date: May 20th, 2018
+// Date: June 1st, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
-	The analysis class is the core class which allows the event processing to run. It contains a list of pointers to algorithms, each of which is (1) initialised, (2) run on each event, and (3) finalised. This class does not define what an event is, but merely runs each algorithm sequentially and passes the clipboard between them (erasing it at the end of each Run sequence).
-	An example: you can start with (a) some load algorithm, follow up with (b) an algorithm that writes the data loaded to some histograms, and end with (c) some track fitting. The cool thing is that you can now easily cut out the writing step (b) by commenting it in Steering, or replace it with some other algorithm.
+	The analysis class is a core class that allows to run algorithms over each event. It contains a list of pointers to algorithms, each of which is (1) initialised, (2) run on each event, and (3) finalised. This class does not define what an event is, but merely runs each algorithm sequentially and passes the clipboard between them (erasing it at the end of each Run sequence).
+	An example: you can start with (a) some load algorithm, follow up with (b) an algorithm that writes the data loaded to some histograms, and end with (c) some track fitting. The cool thing is that you can now easily cut out the writing step (b) by commenting it in Steering or by replace it with some other algorithm.
 	When an algorithm returns NoData (see TAlgorithm), it will simply jump to the next event. When an algorithm returns Finished, the event processing will stop at the end of run.
 */
 
@@ -78,7 +78,7 @@
 		while(run) {
 			// Event info: step info is printed within same line (no newlines)
 			cout << "\rRunning over event " << pFileNumber << "/" << pTotalFiles << flush;
-			if(fETAString!="") cout << " (ETA:" << fETAString << ")" << flush;
+			if(fETAString!="") cout << " (ETA:" << fETAString << ")    " << flush;
 			Bool_t nodata = false;
 			// Run all algorithms
 			TAlgoritmIter_t it = fAlgorithms.begin();
@@ -126,6 +126,10 @@
 	// FINALISE STEP: Finalise all algorithms
 	void TAnalysis::FinaliseAll()
 	{
+		// Start finalise operation
+		cout << endl
+			<< "=================| Initialising algorithms |=================="
+			<< endl;
 		// Start stopwatch for finalise operation
 		fLocalStopwatch = new TStopwatch();
 		// Perform finalisations
@@ -154,8 +158,15 @@
 			<< "===============| Wall-clock Timing (seconds) |================" << endl;
 		if(pTotalFiles) {
 			TAlgoritmIter_t it = fAlgorithms.begin();
-			Double_t timer, total = fTimingInitial;
+			// Print reading time if more than 1 s
+			if(fTimingInitial>.1) {
+				cout.width(22);
+				cout << "INITIALISATION" << "  --  ";
+				PrintTimeFormat(fTimingInitial);
+				cout << endl;
+			}
 			// Print time per algorithm
+			Double_t timer, total = fTimingInitial;
 			while( it!=fAlgorithms.end() ) {
 				timer = (*it)->GetStopwatch()->RealTime();
 				total += timer;
@@ -165,13 +176,16 @@
 				cout << " = " << timer/pTotalFiles << " s/evt" << endl;
 				++it;
 			}
-			// Print writing time
+			// Print writing time if more than 1 s
 			total += fTimingFinal;
-			cout.width(22);
-			cout << "FINALISATION" << "  --  ";
-			PrintTimeFormat(fTimingFinal);
-			cout << endl << "--------------------------------------------------------------\n";
+			if(fTimingFinal>.1) {
+				cout.width(22);
+				cout << "FINALISATION" << "  --  ";
+				PrintTimeFormat(fTimingFinal);
+				cout << endl;
+			}
 			// Print total compilation time
+			cout << "--------------------------------------------------------------" << endl;
 			cout.width(22);
 			cout << "TOTAL" << "  --  ";
 			PrintTimeFormat(total);

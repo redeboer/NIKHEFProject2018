@@ -3,53 +3,41 @@
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
-	An event loader is necessary for any analysis sequence. This event loader loads data from each detecter in each event and places that data on the clipboard for further analysis.
-	(For now, this means it only reads data files from two timepix detectors.)
+	An event loader is necessary for any analysis sequence. This event loader loads data from each detector in each event and places that data on the clipboard for further analysis.
+	(For now, this means it only reads data files from timepix detectors.)
 */
 
 // === INCLUDES =======
 	#include "TEventLoader.h"
+	#include "TSystem.h"
+	#include <fstream>
 	#include <stdio.h>
-	#include <dirent.h>
+	#include <string.h>
 	#include <iostream>
 	#include <sstream>
 	#include "TPixel.h"
+	#include "TTimepix.h"
 	using namespace std;
 	using namespace NIKHEFProject;
 
 // === ALGORITHM STEP FUNCTIONS =======
 
-	// INITIALISE FUNCTION: generate a list of filenames in a directory (fInputFilenames), sorted by the timestamp in these filenames. Note that only files from cam_1 are included, but they will be linked to cam_2 later.
+	// INITIALISE FUNCTION: generate a list of filenames in a directory (fInputFilenames), including compressed directories. The files will be read during Run.
 	void TEventLoader::Initialise()
 	{
+		// Recursively add txt files (including zip files)
+		fCurrentDir = "";
+		TString pwd = gSystem->pwd();
+		AddFileNames(pInput);
+		gSystem->cd(pwd);
 
-		// Open the directory. This directory contains several txt files that contain the timepix data in either matrix or 3xN format
-		DIR* directory = opendir(pInput.Data());
-		if( directory==NULL ) {
-			if(fDebug) printf("Error: Directory \"%s\" does not exist",pInput.Data());
-			return;
-		} else printf("Reading events from directory \"%s\"\n",pInput.Data());
-
-		// Read the entries in the folder
-		dirent* entry;
-		while( entry=readdir(directory) ) {
-			// get the name of this entry
-			TString filename = entry->d_name;
-			// check if it is a .txt file
-			if( filename.EndsWith(".txt") && filename.Contains("_cam_1_") ) {
-				// push back this filename to the list of files to be included
-				fInputFilenames.push_back(filename.Data());
-				if(fDebug) cout<<"Added file: "<<filename<<endl;
-			}
-		}
-
-		// Now, sort the list of filenames
-		fFileIterator = fInputFilenames.begin();
-		// sort(fFileIterator,fInputFilenames.end(),SortString);
+		// Sort list of file names
+		fInputFilenames.sort(SortFileNames);
+		if(fDebug) PrintFileNames();
 
 		// Set total number of events
 		// (this should be done in any algorithm that is loaded in TAnalysis first)
-		pTotalFiles = fInputFilenames.size();
+		fFileIterator = fInputFilenames.begin();
 		pTotalFiles = fInputFilenames.size();
 	}
 
@@ -57,81 +45,193 @@
 	StatusCode TEventLoader::Run()
 	{
 		// Open file if end of filename list has not been reached
-		ifstream file1, file2;
-		TString timepixname1, timepixname2;
+		string filename;
 		if(fFileIterator != fInputFilenames.end()) {
-			// Get timepix names (for generating histograms/graphs)
-			timepixname1 = *fFileIterator;
-			timepixname2 = *fFileIterator;
-			TString filename1(pInput+"/"+*fFileIterator);
+			// Get filestream of txt file
+			filename = *fFileIterator;
 			++fFileIterator;
-			// Open file for cam 1
-			file1.open(filename1.Data());
-			if( !file1.is_open() ) {
-				if(fDebug) cout << "Warning: File \"" << timepixname1 << "\" not found" << endl;
-				return NoData;
-			}
-			// Open file for cam 2
-			TString filename2 = filename1;
-			filename2   .ReplaceAll("_cam_1_","_cam_2_");
-			timepixname2.ReplaceAll("_cam_1_","_cam_2_");
-			file2.open(filename2.Data());
-			if( !file2.is_open() ) {
-				if(fDebug) cout << "Warning: File \"" << timepixname2 << "\" not found" << endl;
-				return NoData;
-			}
-			// Debug message
-			if(fDebug)
-				cout << endl << "Opened files" << endl
-				<< "  \"" << filename1 << "\"" << endl
-				<< "  \"" << filename2 << "\"" << endl;
-			// Remove file extensions from timepix name
-			timepixname1.Remove(timepixname1.Last('.'),4);
-			timepixname2.Remove(timepixname2.Last('.'),4);
+			ifstream file;
+			if(fDebug) cout << endl << endl;
+			OpenFile(file,filename.c_str(),fDebug);
+			if( !file.is_open() ) return NoData;
+			file.close();
 		} else { // return FINISHED if all files have been analysed
 			return Finished;
 		}
-
-		// Create two timepix objects (for cam1 and cam2)
-		ULong64_t timestamp = GetTimestamp(timepixname1);
-		TTimepix* timepix1 = new TTimepix("cam1",timestamp);
-		TTimepix* timepix2 = new TTimepix("cam2",timestamp);
-
-		// Import Timepix data for cam 1
-			LoadTimepix(file1,timepix1);
-			if( !timepix1->GetNHits() ) {
-				delete timepix1;
-				if(fDebug) cout << endl << "File \"" << timepixname1 << "\" is empty" << endl;
-				return NoData;
-			}
-			file1.close();
-
-		// Import Timepix data for cam 1
-			LoadTimepix(file2,timepix2);
-			if( !timepix2->GetNHits() ) {
-				delete timepix2;
-				if(fDebug) cout << endl << "File \"" << timepixname2 << "\" is empty" << endl;
-				return NoData;
-			}
-			file2.close();
-
-		// Put the timpixes on the clipboard
-		fClipboard->Put(timepix1);
-		fClipboard->Put(timepix2);
-
-		// SUCCESS: if entire procedure has been run
+		// Attempt to create timepix from txt file
+		if(!LoadTimepix(filename.c_str())) return NoData;
+		// SUCCESS if entire procedure has been run
 		return Success;
 	}
 
-	// FINALISE FUNCTION: only prints number of events analysed
-	void TEventLoader::Finalise() {}
+	// FINALISE FUNCTION: remove all extracted zip files
+	void TEventLoader::Finalise() {
+		fFileIterator = fZipFolderNames.begin();
+		while( fFileIterator!=fZipFolderNames.end() ) {
+			cout << "Removing extracted files \"" << GetFileName(*fFileIterator) << "\"" << endl;
+			gSystem->Exec(("rm -rf \""+*fFileIterator+"\"").c_str());
+			++fFileIterator;
+		}
+	}
 
+// === PRINT FUNCTIONS =======
+	void TEventLoader::PrintFileNames() {
+		fFileIterator = fInputFilenames.begin();
+		while( fFileIterator!=fInputFilenames.end() ) {
+			cout << GetFileName(*fFileIterator) << endl;
+			++fFileIterator;
+		}
+		cout << fInputFilenames.size() << " FILES IN TOTAL" << endl;
+	}
 // === PRIVATE FUNCTIONS =======
-	void TEventLoader::LoadTimepix(ifstream& filestream, TTimepix* timepix) {
+	// Function that attempts to reads information from a .dsc file generated by the timepix
+	Bool_t TEventLoader::ReadDSC(const char* filename)
+	{
+		// Open file stream of dsc file
+		TString dscname(filename);
+		RemoveExtension(dscname);
+		dscname += ".dsc";
+		ifstream filestream;
+		OpenFile(filestream,dscname.Data(),fDebug);
+		if(!filestream.is_open()) return false;
+		// Read line by line
+		while(filestream.getline(pBuffer,pBufferSize)) {
+			TString tData(pBuffer);
+			// Get width+height
+			if( tData.Contains(" width=") && tData.Contains(" height=") ) {
+				TString line(pBuffer);
+				stringstream str1( line.Remove(0,line.Index(" width=")+7).Data() );
+				str1 >> fNCols;
+				stringstream str2( line.Remove(0,line.Index(" height=")+8).Data() );
+				str2 >> fNRows;
+				if(fDebug) cout << "  --> dimensions: " << fNCols << "x" << fNRows << endl;
+			}
+			// Get clock frequency [MHz]
+			else if(tData.Contains("\"Mpx clock\"")) {
+				filestream.getline(pBuffer,pBufferSize); // skip line "double[1]"
+				filestream.getline(pBuffer,pBufferSize); // get data line
+				istringstream sstream(pBuffer);
+				sstream >> fMpxClock;
+				if(fDebug) cout << "  --> medipix clock [MHz]: " << fMpxClock << endl;
+			}
+			// Get "acquisition time [s]"
+			else if(tData.Contains("\"Acq time\"")) {
+				filestream.getline(pBuffer,pBufferSize); // skip line "double[1]"
+				filestream.getline(pBuffer,pBufferSize); // get data line
+				istringstream sstream(pBuffer);
+				sstream >> fAcqTime;
+				if(fDebug) cout << "  --> acquisition time [s]: " << fAcqTime << endl;
+			}
+			// Get "acquisition start time"
+			else if(tData.Contains("\"Start time\"")) {
+				filestream.getline(pBuffer,pBufferSize); // skip line "double[1]"
+				filestream.getline(pBuffer,pBufferSize); // get data line
+				istringstream sstream(pBuffer);
+				sstream >> fStartTime;
+				if(fDebug) cout << "    start time: " << fStartTime << endl;
+			}
+		}
+		filestream.close();
+		return true;
+	}
+	// Function that determines timepix size and file format of txt file
+	Bool_t TEventLoader::DetermineFileFormat(const char* filename)
+	{
+		if(fDebug) cout << "  Determining format of \"" << filename <<  "\"" << endl;
+		// Generate file stream
+		ifstream filestream;
+		OpenFile(filestream,filename);
+		// Some counters and read dumps
+		UInt_t nlines = 0;
+		UInt_t nvals  = 0;
+		Int_t val;
+		fNCols=pNCols, fNRows=pNRows;
+		// fNCols=1, fNRows=1; // chose this if you want to reset find maximum at each run
+		// Read lines
+		while( filestream.getline(pBuffer,pBufferSize) ) {
+			istringstream sstream(pBuffer); // create line stream from filestream
+			// get 1st two values in line and store if maximum
+			sstream >> val; if( val>fNCols ) fNCols = val;
+			sstream >> val; if( val>fNRows ) fNRows = val;
+			nvals+=2; // count number of values read
+			while(sstream >> val) ++nvals; // count remaining number of values
+			++nlines; // count number of lines
+		}
+		// Abort if empty
+		if(nvals==0) {
+			if(fDebug) cout << "  --> file is empty" << endl;
+			return false;
+		}
+		// Verify if text file is a rectangular block of values
+		if( nvals%nlines!=0 ) {
+			if(fDebug) cout << "  --> not a rectangular block of values." << endl;
+			return false;
+		}
+		// Set file and timepix dimensions and matrix format bit
+		nvals /= nlines;
+		if(nvals==3) { // maximum value if 3xN format (rounded to next pwer of 2)
+			fNCols = PowerOfTwo(fNCols);
+			fNRows = PowerOfTwo(fNRows);
+			fMatrixFormat = false;
+		} else { // just the matrix size if in matrix format
+			fNCols = nvals;
+			fNRows = nlines;
+			fMatrixFormat = true;
+		}
+		// Set global values
+		pNCols=fNCols, pNRows=fNRows;
+		// Close file stream and return
+		filestream.close();
+		if(fDebug) {
+			cout << "  --> file dimensions:    " << nvals << "x" << nlines << endl;
+			cout << "  --> timepix dimensions: " << fNCols << "x" << fNRows << endl;
+		}
+		return true;
+	}
+	// Function that determines timepix size and file format of txt file
+	Bool_t TEventLoader::IsMatrixFormat(const char* filename)
+	{
+		// Get first line and create string stream
+		ifstream filestream;
+		OpenFile(filestream,filename);
+		filestream.getline(pBuffer,pBufferSize);
+		istringstream sstream(pBuffer);
+		// Read first three values
+		UShort_t val;
+		sstream >> val >> val >> val;
+		// Is matrix format if 4th value exist
+		if(sstream >> val) fMatrixFormat = true;
+		else               fMatrixFormat = false;
+		// Close file stream and return
+		filestream.close();
+		if(fDebug) {
+			if(fMatrixFormat) cout << "  --> matrix format" << endl;
+			else              cout << "  --> 3xN format" << endl;
+		}
+		return fMatrixFormat;
+	}
+	// Function that loads a timepix with hit pixels as read from a txt data file. If the input filename contains the TPC1 identifier (pTPC1id), at attempt is made to load the corresponding TPC2 data as well (identified by pTPC2id).
+	Bool_t TEventLoader::LoadTimepix(const char* filename)
+	{
+		// Attempt to open dsc file
+		// if dsc file exists, determine format from first line only
+		if( ReadDSC(filename) ) IsMatrixFormat(filename);
+		// if no dsc file exists, determine format with full method
+		else if(!DetermineFileFormat(filename)) return false;
+		// Initiate Timepix data
+		TString timepixname = GetFileName(filename);
+		RemoveExtension(timepixname);
+		TTimepix* timepix = new TTimepix(
+			timepixname.Data(), GetTimestamp(timepixname),
+			fNCols, fNRows, fMpxClock, fAcqTime, fStartTime );
+		// Open file stream
+		ifstream filestream;
+		OpenFile(filestream,filename);
+		// Read lines
 		UShort_t row, col, adc;
-		if(pMatrixFormat) { // if in matrix format
-			for( row=0; row<pNRows; row++ ) {
-				for( col=0; col<pNCols; col++ ) {
+		if(fMatrixFormat) { // if in matrix format
+			for( row=0; row<timepix->GetNRows(); row++ ) {
+				for( col=0; col<timepix->GetNColumns(); col++ ) {
 					filestream >> adc;
 					if(adc) {
 						TPixel* pixel = new TPixel(col,row,adc);
@@ -141,9 +241,8 @@
 				}
 			}
 		} else { // if in 3xN format
-			string data;
-			while(getline(filestream,data)) {
-				istringstream sstream(data);
+			while(filestream.getline(pBuffer,pBufferSize)) {
+				istringstream sstream(pBuffer);
 				sstream >> row >> col >> adc;
 				if(adc) {
 					TPixel* pixel = new TPixel(col,row,adc);
@@ -151,4 +250,68 @@
 					fClipboard->Put(pixel);
 				}
 			}
-		} }
+		}
+		// Put the timpix on the clipboard and close file stream
+		fClipboard->Put(timepix);
+		filestream.close();
+		// Warning message
+		if( !timepix->GetNHits() ) if(fDebug) cout << "  \"" << timepixname << "\" has no hits" << endl;
+		// See if file defines TPC1. If so, attempt to load corresponding TPC2
+		timepixname = filename;
+		if(timepixname.Contains(pTPC1id)) {
+			timepixname.ReplaceAll(pTPC1id,pTPC2id);
+			LoadTimepix(timepixname.Data());
+		}
+		return true;
+	}
+	// Function that adds a filename to fInputFilenames if extension is txt. If the file name contains the identifier for TPC 2, it is skipped, so that it can be simulateaously loaded in one event Run when its corresponding TPC 1 file is loaded.
+	void TEventLoader::AddFileName(TString name)
+	{
+		if( name.EndsWith(".txt") ) {
+			fInputFilenames.push_back(name.Data());
+			if(fDebug) cout << "  Added file: \"" << name << "\"" << endl;
+		}
+	}
+	// Function that recursively adds all txt files in a directory or extracts them if they are compressed files
+	void TEventLoader::AddFileNames(TString input)
+	{
+		// Abort if hidden file (starts with '.')
+		if(input.Length()>1&&input(0)=='.') return;
+		// Get pwd and replace with relative path as entered by pInput
+		if(fDebug) cout << "Applying AddFileNames to \"" << fCurrentDir+input << "\"" << endl;
+		// Either continue recursively on directory or add/extract files
+		if(gSystem->cd(input)) { // if directory
+			fCurrentDir+=input;
+			fCurrentDir+="/";
+			TSystemDirectory dir(".",".");
+			TList* files = dir.GetListOfFiles();
+			TIter next(files);
+			next(); // skip folder "."
+			next(); // skip folder ".."
+			TString name = dir.GetName();
+			TSystemFile* entry = NULL;
+			while( entry=(TSystemFile*)next() ) {
+				if(entry->IsDirectory()) AddFileNames(entry->GetName());
+				else if(!ExtractZipFile(entry->GetName())) AddFileName(fCurrentDir+entry->GetName());
+			}
+			gSystem->cd("..");
+			fCurrentDir.Chop(); // remove last '/'
+			fCurrentDir.Resize(fCurrentDir.Last('/')+1);
+		} else // if file
+			if(!ExtractZipFile(input)) AddFileName(fCurrentDir+input);
+	}
+	// If input is a zipfile, extract it, store its output folder name, and apply AddFileNames
+	Bool_t TEventLoader::ExtractZipFile(TString input)
+	{
+		if(IsZipFile(input)) {
+			cout << "Extracting \"" << input << "\"" << endl;
+			TString outputfolder(input);
+			RemoveExtension(outputfolder);
+			gSystem->mkdir(outputfolder);
+			gSystem->Exec("aunpack \""+input+"\" -qfX\""+outputfolder+"\"");
+			fZipFolderNames.push_back((string)(TString(gSystem->pwd())+"/"+outputfolder));
+			AddFileNames(outputfolder);
+			return true;
+		}
+		return false;
+	}

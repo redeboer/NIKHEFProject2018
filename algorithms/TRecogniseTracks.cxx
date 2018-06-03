@@ -30,12 +30,12 @@
 		fTimepixIter = fTimepixList->begin();
 		while( fTimepixIter!=fTimepixList->end() ) {
 			nodata = !RecogniseTracks(*fTimepixIter) && nodata;
+			if(fDebug) cout << endl << "  --> recognised " << (Int_t)fNTracks << " track(s) in timepix \"" << (*fTimepixIter)->GetName() << "\"" <<  endl;
 			++fTimepixIter;
 		}
-// fClipboard->CheckCollections();
 		// NODATA: if no timepix in clipboard
 		if(nodata) {
-			if(fDebug) cout << endl << "One of the timepixes has no tracks" << endl;
+			if(fDebug) cout << endl << "  --> no timepix to search for tracks" << endl;
 			return NoData;
 		}
 
@@ -61,10 +61,12 @@
 			TH2I* hough = MakeHough2D(fRemainder);
 			Int_t maxPbin, maxRbin, zdummy;
 			hough->GetMaximumBin(maxPbin,maxRbin,zdummy);
-			Double_t maxP = maxPbin * pPStep;
-			Double_t maxR = maxRbin * pRStep - pRmax;
+			Double_t maxP = hough->GetXaxis()->GetBinCenter(maxPbin);
+			Double_t maxR = hough->GetYaxis()->GetBinCenter(maxRbin);
 			Double_t tR1 = maxR - pDeltaR;
 			Double_t tR2 = maxR + pDeltaR;
+			if(fDebug) printf("\n  TRACK %u\n    Hough cutout: phi = %.0f deg, r = %.1f +/- %.1f",
+				fNTracks, maxP, maxR, pDeltaR );
 			// Make a new remainder and track holder
 			fCluster = new TTimepix(fRemainder);
 			TTimepix* tRemainder = new TTimepix(fRemainder);
@@ -82,6 +84,8 @@
 				else               tRemainder->GetPixels()->push_back(*it); // or to new remainder
 				++it;
 			}
+			if(fDebug) printf("\n    grouped %u/%u pixels as new track",
+				tRemainder->GetNHits(), fRemainder->GetNHits() );
 			// Set new remainder and delete old one
 			delete fRemainder;
 			fRemainder = tRemainder;
@@ -89,15 +93,15 @@
 			if(fCluster->GetNHits()) { // if there is data
 				if(fCanWrite) hough->Write();
 				fClipboard->Put((timepix->GetName()+"clusters").Data(),fCluster);
+				++fNTracks;
 			} else { // but not if no data
 				delete fCluster;
 			}
-			++fNTracks;
 			// Delete Hough
 			delete hough;
 		}
-		// Delete remainder
-		delete fRemainder;
+		// Return number of recognised tracks when finished while loop
+		return fNTracks;
 	}
 	// Function that computes the R in a hough transform for some point and a phi
 	Double_t TRecogniseTracks::ComputeHoughR( Double_t x, Double_t y, Double_t phi )
@@ -112,13 +116,11 @@
 	{
 		// generate name and histogram for Hough transform
 		TString name;
-		name.Form("%s_%u",timepix->GetName().Data(),timepix->GetTimestamp());
-		name.Append("_HT");
-		name.Append(fNTracks+'0');
+		name.Form("%s_HT%c", timepix->GetName().Data(), fNTracks+'0' );
 		TH2I* hough = new TH2I(name,
-			name+";#phi (#circ);r = x cos(#phi) + y sin(#phi)",             // axis labels
-			pPSteps, 0, 180,                                   // bin definitions
-			pRSteps,-pRmax, pRmax ); // bin definitions
+			name+";#phi (#circ);r = x cos(#phi) + y sin(#phi)", // axis labels
+			pPSteps, 0, 180,                                    // bin definitions
+			pRSteps, -timepix->GetDiagonal(), timepix->GetDiagonal() ); // bin definitions
 		hough->SetOption(pDrawHistoOption);
 		// loop over pixels in remainder
 		Double_t x, y, r, phi;

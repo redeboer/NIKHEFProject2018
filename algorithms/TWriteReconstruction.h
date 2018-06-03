@@ -14,7 +14,8 @@
 	#include "TAlgorithm.h"
 	#include "TRecPoint.h"
 	#include "TGraph2D.h"
-	#include "TH2I.h"
+	#include "TH1I.h"
+	#include "TH2S.h"
 	#include "TH2D.h"
 	#include "TH3D.h"
 	#include "TTree.h"
@@ -50,15 +51,20 @@ private:
 	Double_t fChiSqXY2,fChiSqXZ2;
 	Double_t fPy1,fPz1,fVy1,fVz1;
 	Double_t fPy2,fPz2,fVy2,fVz2;
-	Double_t fX, fY, fZ, fEloss;
+	Double_t fX, fY, fZ, fAngle, fEloss;
 	// Graph and histograms
-	TH3D* fRecPointDist3D;
-	TH2D* fRecPointDistXY;
-	TH2D* fRecPointDistXZ;
-	TH2D* fRecPointDistYZ;
 	TH2I* fTPC1pointsYZ; // histogram of fState
 	TH2I* fTPC2pointsYZ; // histogram of fState
-	TH2D* fTPC2energyYZ; // histogram of fState with energy loss attributed
+	TH3S* fRecPoints3D;
+	TH2S* fRecPoints3Dxy;
+	TH2S* fRecPoints3Dxz;
+	TH2S* fRecPoints3Dyz;
+	TH3D* fRecEnergy3D;
+	TH2D* fRecEnergy3Dxy;
+	TH2D* fRecEnergy3Dxz;
+	TH2D* fRecEnergy3Dyz;
+	TH2D* fRecAngles2D;
+	TH1I* fRecAngles;
 	TGraph2D* fGraph;
 
 };

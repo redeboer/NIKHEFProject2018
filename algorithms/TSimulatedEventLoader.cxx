@@ -7,6 +7,7 @@
 	In the current form, Geant generates tracks data in the form of vectors. When using the simulated eventloader, the recognise-and-fit-tracks algorithms can therefore be skipped.
 */
 // === INCLUDES =======
+	#include "TString.h"
 	#include "TSimulatedEventLoader.h"
 	#include <stdio.h>
 	#include <sstream>
@@ -55,8 +56,11 @@
 		// Create two timepixes and put on clipboard (pixels won't be filled)
 		ULong64_t timestamp;
 		sstr >> timestamp; // event number
-		TTimepix* timepix1 = new TTimepix("cam1",timestamp);
-		TTimepix* timepix2 = new TTimepix("cam2",timestamp);
+		TString name;
+		name.Form("%s_%u",pTPC1id,timestamp);
+		TTimepix* timepix1 = new TTimepix(name.Data(),timestamp);
+		name.Form("%s_%u",pTPC2id,timestamp);
+		TTimepix* timepix2 = new TTimepix(name.Data(),timestamp);
 		fClipboard->Put(timepix1);
 		fClipboard->Put(timepix2);
 		// Create two tracks attached to these timepixes

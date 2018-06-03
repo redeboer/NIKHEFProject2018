@@ -7,13 +7,13 @@
 */
 
 // === INCLUDES =======
-	#include "GlobalParameters.h"
 	#include "TIntersectTracks.h"
 	#include <iostream>
 	#include "TMath.h"
 	#include "TTrack.h"
 	using namespace std;
 	using namespace TMath;
+	using namespace NIKHEFProject;
 	using namespace NIKHEFProject::Detector;
 
 // === ALGORITHM STEP FUNCTIONS =======
@@ -27,21 +27,21 @@
 		// Works only if there are two tracks
 		fTrackList = (TTrackList_t*)fClipboard->Get("tracks");
 		if(fTrackList->size()!=2) {
-			if(fDebug) cout << endl << "There are " << fTrackList->size() << " tracks while we want 2 tracks only" << endl;
+			if(fDebug) cout << endl << "  There are " << fTrackList->size() << " tracks while we want 2 tracks only" << endl;
 			return NoData;
 		}
 		// Extract tracks
 		fTrackIter = fTrackList->begin();
 		fTrack1 = *fTrackIter;
-		if(!fTrack1->GetCluster()->GetName().Contains("cam1")) {
-			if(fDebug) cout << endl << "Track 1 does not belong to \"cam1\", but to \"" << fTrack1->GetCluster()->GetName() << "\"" << endl;
+		if(!fTrack1->GetCluster()->GetName().Contains(pTPC1id)) {
+			if(fDebug) cout << endl << "  Track 1 does not belong to \"" << pTPC1id << ", but to \"" << fTrack1->GetCluster()->GetName() << "\"" << endl;
 			return NoData;
 		}
-		fTrackIter++;
+		++fTrackIter;
 		fTrack2 = *fTrackIter;
-		while( !fTrack2->GetCluster()->GetName().Contains("cam2") && fTrackIter!=fTrackList->end() ) {
-			if(fDebug) cout << endl << "Track 2 does not belong to \"cam2\", but to \"" << fTrack2->GetCluster()->GetName() << "\"" << endl;
-			fTrackIter++;
+		while( !fTrack2->GetCluster()->GetName().Contains(pTPC2id) && fTrackIter!=fTrackList->end() ) {
+			if(fDebug) cout << endl << "  Track 2 does not belong to \"" << pTPC2id << "\", but to \"" << fTrack2->GetCluster()->GetName() << "\"" << endl;
+			++fTrackIter;
 		}
 		if( fTrackIter==fTrackList->end() ) return NoData;
 		// Reconstruct point of intersection and put to clipboard

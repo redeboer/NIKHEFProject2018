@@ -62,10 +62,9 @@
 	void TWriteTimepixHist::MakeHistogram(TTimepix* timepix)
 	{
 		// Generate appropriate name and title
-		TString name;
-		name.Form("%s_%u",timepix->GetName().Data(),timepix->GetTimestamp());
+		TString name(timepix->GetName());
 		// Create histogram of correct number of pixels
-		fHistogram = new TH2D( name.Data(), name.Data(), pNCols, 0, pNCols, pNRows, 0, pNRows );
+		fHistogram = new TH2D( name.Data(), name.Data(), timepix->GetNColumns(), 0, timepix->GetNColumns(), timepix->GetNRows(), 0, timepix->GetNRows() );
 		fHistogram->SetOption(pDrawHistoOption);
 		// Fill bins by looping over pixels in timepix
 		TPixelIter_t it = timepix->GetPixels()->begin();
