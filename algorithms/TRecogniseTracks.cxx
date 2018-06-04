@@ -30,7 +30,7 @@
 		fTimepixIter = fTimepixList->begin();
 		while( fTimepixIter!=fTimepixList->end() ) {
 			nodata = !RecogniseTracks(*fTimepixIter) && nodata;
-			if(fDebug) cout << endl << "  --> recognised " << (Int_t)fNTracks << " track(s) in timepix \"" << (*fTimepixIter)->GetName() << "\"" <<  endl;
+			if(fDebug) cout << endl << "  --> recognised " << (Int_t)fNTracks << " track(s) in timepix \"" << (*fTimepixIter)->GetName() << "\" (" << (*fTimepixIter)->GetNHits() << ")" << endl;
 			++fTimepixIter;
 		}
 		// NODATA: if no timepix in clipboard
@@ -38,7 +38,6 @@
 			if(fDebug) cout << endl << "  --> no timepix to search for tracks" << endl;
 			return NoData;
 		}
-
 		// SUCCESS: if entire procedure has been run
 		return Success;
 	}

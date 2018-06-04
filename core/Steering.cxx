@@ -62,8 +62,8 @@ Int_t main(Int_t argc, char *argv[]) {
 		// analysis->Add( new TWriteTimepixGraph(clipboard,false) );
 		analysis->Add( new TFitTracks(clipboard,false) );
 	}
-	analysis->Add( new TIntersectTracks(clipboard,false) );
-	analysis->Add( new TWriteReconstruction(clipboard,false) );
+	// analysis->Add( new TIntersectTracks(clipboard,false) );
+	// analysis->Add( new TWriteReconstruction(clipboard,false) );
 	/* -------------------------------------- */
 
 	// Run the analysis
