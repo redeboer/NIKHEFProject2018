@@ -1,5 +1,5 @@
 // Author: Remco de Boer
-// Date: June 1st, 2018
+// Date: June 6th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -36,10 +36,10 @@ namespace NIKHEFProject {
 	extern UChar_t pMaxNFits;
 	extern UChar_t pMinClusterPixels;
 	// IO names
-	extern Bool_t pSimulationData; // determined from input file name
 	extern TString pInput;
-	extern TString pOutput;
-	extern const TString pTempZipFolderFull;
+	extern TString pOutput;        // determined from input file name
+	extern TString pCaloFileName;  // determined from input file name
+	extern Bool_t pSimulationData; // determined from input file name
 	extern const Char_t* pSupportedZipExts[];
 	extern const UChar_t pNSupportedZipExts;
 	// Structural names
@@ -83,6 +83,7 @@ namespace NIKHEFProject {
 	extern ULong64_t GetTimestamp(std::string);
 	extern TString FormatInputString(const char*);
 	extern TString FormatOutputString(const char*);
+	extern TString FormatCaloFileString(const char*);
 	extern TString GetMotherPath(TString);
 	extern TString GetMotherPath(const char*);
 	extern TString GetFileName(TString);

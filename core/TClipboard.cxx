@@ -18,11 +18,11 @@
 		fObjectsMap[name].push_back(object);
 	}
 	// Add specific objects to the clipboard (name detected 'automatically')
-	void TClipboard::Put(TCalo*     obj) { Put("calorimeter", obj); }
-	void TClipboard::Put(TPixel*    obj) { Put("pixels",      obj); }
-	void TClipboard::Put(TRecPoint* obj) { Put("recpoint",    obj); }
-	void TClipboard::Put(TTimepix*  obj) { Put("timepix",     obj); }
-	void TClipboard::Put(TTrack*    obj) { Put("tracks",      obj); }
+	void TClipboard::Put(TCaloEvent*   obj) { Put("caloevents",  obj); }
+	void TClipboard::Put(TPixel*       obj) { Put("pixels",      obj); }
+	void TClipboard::Put(TRecPoint*    obj) { Put("recpoint",    obj); }
+	void TClipboard::Put(TTimepix*     obj) { Put("timepix",     obj); }
+	void TClipboard::Put(TTrack*       obj) { Put("tracks",      obj); }
 
 	// Clear items on the clipboard
 	void TClipboard::Clear()

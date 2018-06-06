@@ -28,6 +28,9 @@ These four components are contained withing **Steering**. This is just the main 
 Now, the cool thing is that, as long as an algorithm passes on passes data through the clipboard, it doesn't matter what other algorithms do with the output. This allows your group members (or students who later pick up your work) to add their own algorithms or switch off certain algorithms (steps) in the overall analysis procedure.
 
 ## Usage
-Compiling everything is done easily using `make`, which simply follows the Makefile script. You can then run the executable with `./execute` or `./execute -i "<folder or txt file you want to analyse>"`.
+Compiling everything is done easily using `make`, which simply follows the `Makefile` script. You can then run the executable with or without options, like:
+- `./execute`
+- `./execute -i "<folder or txt file you want to analyse>"`
+- `./execute -i "<folder you want to analyse>" -c <location of calo file>`
 
 If you are on Linux and have no CERN ROOT installed, you will have to install it prior to `make`. For this, you run the shell script `Install CERN ROOT6.sh` (or just read that script as a guide).

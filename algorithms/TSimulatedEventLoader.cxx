@@ -47,7 +47,7 @@
 			dir x TPC1 || dir y TPC1 || dir z TPC1 ||
 			point x TPC2 [pixel] || point y TPC2 [pixel] || point z TPC2 [pixel] ||
 			dir x TPC2 || dir y TPC2 || dir z TPC2 ||
-			energy Calo [MeV] */
+			energy CaloEvent [MeV] */
 		if(!fFilestream.getline(pBuffer,pBufferSize)) {
 			if(fDebug) printf("\nEnd of file reached (event %d/%d)\n",pEventNumber,pTotalFiles);
 			return Finished;
@@ -83,7 +83,8 @@
 		track2->SetDirection(x,y,z);
 		// Read energy for calorimeter
 		if( !(sstr >> x) ) return NoData;
-		TCalo* calo = new TCalo("calorimeter",timestamp,x);
+		TCaloEvent* calo = new TCaloEvent(pEventNumber,timestamp);
+		calo->SetEnergy(x);
 		fClipboard->Put(calo);
 
 		// SUCCESS: if entire procedure has been run

@@ -11,6 +11,7 @@
 
 // === INCLUDE =======
 	#include <list>
+	#include "GlobalParameters.h"
 	#include "TObject.h"
 
 // === CLASS DECLARATION =======
@@ -20,8 +21,6 @@ public:
 	// Constructors and destructors
 	TBeamObject() {}
 	virtual ~TBeamObject();
-	// Static functions
-	// static TBeamObject* Factory(string, TBeamObject* obj = NULL);
 
 };
 

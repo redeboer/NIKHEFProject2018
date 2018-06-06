@@ -12,7 +12,7 @@
 // === INCLUDES =======
 	#include "TTrack.h"
 	#include "TAlgorithm.h"
-	#include "TCalo.h"
+	#include "TCaloEvent.h"
 	#include "TRecPoint.h"
 	#include "TTrack.h"
 
@@ -39,8 +39,8 @@ private:
 	// Temporary pointers
 	TTrackList_t* fTrackList;
 	TTrackIter_t  fTrackIter;
-	TCaloList_t* fCaloList;
-	TCalo* fCalo;
+	TCaloEventList_t* fCaloList;
+	TCaloEvent* fCaloEvent;
 	TRecPoint* fRecPointObj;
 	TTrack* fTrack1;
 	TTrack* fTrack2;

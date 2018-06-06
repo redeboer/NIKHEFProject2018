@@ -14,9 +14,3 @@
 
 // === CONSTRUCTORS =======
 	TBeamObject::~TBeamObject() {}
-// === STATIC FUNCTIONS =======
-	// Function to get instantiation of inherited class: given a string, give back an object of type 'daughter'
-	// TBeamObject* TBeamObject::Factory(string objType, TBeamObject* obj) {
-	// 	if(objType == "pixels")  return (obj == NULL) ? new TPixel()   : new TPixel(*(TPixel*)obj);
-	// 	if(objType == "timepix") return (obj == NULL) ? new TTimepix() : new TTimepix(*(TTimepix*)obj);
-	// }

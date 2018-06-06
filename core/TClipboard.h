@@ -21,7 +21,7 @@
 	// Beam objects
 	#include "GlobalParameters.h"
 	#include "TBeamObject.h"
-	#include "TCalo.h"
+	#include "TCaloEvent.h"
 	#include "TPixel.h"
 	#include "TRecPoint.h"
 	#include "TTimepix.h"
@@ -48,7 +48,7 @@ public:
 		void Put(std::string, TBeamObject*);
 		void Clear();
 	// Specific put functions (MODIFY IF objs CLASSES CHANGE)
-		void Put(TCalo*);
+		void Put(TCaloEvent*);
 		void Put(TPixel*);
 		void Put(TRecPoint*);
 		void Put(TTrack*);

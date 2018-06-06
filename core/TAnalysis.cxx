@@ -156,7 +156,7 @@
 	{
 		cout << endl
 			<< "===============| Wall-clock Timing (seconds) |================" << endl;
-		if(pTotalFiles) {
+		if(pTotalFiles||pEventNumber) {
 			TAlgoritmIter_t it = fAlgorithms.begin();
 			// Print reading time if more than 1 s
 			if(fTimingInitial>.1) {

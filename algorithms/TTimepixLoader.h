@@ -7,8 +7,8 @@
 	(For now, this means it only reads data files from timepix detectors.)
 */
 
-#ifndef TTIMEPIXEVENTLOADER_H
-#define TTIMEPIXEVENTLOADER_H 1
+#ifndef TTIMEPIXLOADER_H
+#define TTIMEPIXLOADER_H 1
 
 // === INCLUDES =======
 	#include "TString.h"
@@ -18,16 +18,16 @@
 	#include "TAlgorithm.h"
 
 // === CLASS DEFINITION =======
-class TEventLoader : public TAlgorithm {
+class TTimepixLoader : public TAlgorithm {
 
 public:
 	// Constructors and destructors
 	// no writing operation, so writing bit set to false
-	TEventLoader(TClipboard* cp)
-		: TAlgorithm(cp,"TEventLoader",false) {}
-	TEventLoader(TClipboard* cp, Bool_t debug)
-		: TAlgorithm(cp,"TEventLoader",false,debug) {}
-	~TEventLoader() {}
+	TTimepixLoader(TClipboard* cp)
+		: TAlgorithm(cp,"TTimepixLoader",false) {}
+	TTimepixLoader(TClipboard* cp, Bool_t debug)
+		: TAlgorithm(cp,"TTimepixLoader",false,debug) {}
+	~TTimepixLoader() {}
 
 	// Algorithm step functions
 	void Initialise();
@@ -64,4 +64,4 @@ private:
 
 };
 
-#endif // TTIMEPIXEVENTLOADER_H
+#endif // TTIMEPIXLOADER_H

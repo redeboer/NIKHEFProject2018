@@ -18,7 +18,8 @@
 	#include "TClipboard.h"
 
 // === INCLUDED ALGORITHMS =======
-	#include "TEventLoader.h"
+	#include "TCaloLoader.h"
+	#include "TTimepixLoader.h"
 	#include "TSimulatedEventLoader.h"
 	#include "TWriteTimepixHist.h"
 	#include "TWriteTimepixGraph.h"
@@ -55,15 +56,18 @@ Int_t main(Int_t argc, char *argv[]) {
 	/* -------------| ALGORITHMS |----------- */
 	if(pSimulationData) {
 		analysis->Add( new TSimulatedEventLoader(clipboard,false) );
+		analysis->Add( new TIntersectTracks(clipboard,false) );
+		analysis->Add( new TWriteReconstruction(clipboard,false) );
 	} else {
-		analysis->Add( new TEventLoader(clipboard,false) );
-		analysis->Add( new TRecogniseTracks(clipboard,false) );
-		analysis->Add( new TWriteTimepixHist(clipboard,false) );
+		analysis->Add( new TCaloLoader(clipboard,false) );
+		// analysis->Add( new TTimepixLoader(clipboard,false) );
+		// analysis->Add( new TRecogniseTracks(clipboard,false) );
+		// analysis->Add( new TWriteTimepixHist(clipboard,false) );
+		// analysis->Add( new TFitTracks(clipboard,false) );
 		// analysis->Add( new TWriteTimepixGraph(clipboard,false) );
-		analysis->Add( new TFitTracks(clipboard,false) );
+		// analysis->Add( new TIntersectTracks(clipboard,false) );
+		// analysis->Add( new TWriteReconstruction(clipboard,false) );
 	}
-	// analysis->Add( new TIntersectTracks(clipboard,false) );
-	// analysis->Add( new TWriteReconstruction(clipboard,false) );
 	/* -------------------------------------- */
 
 	// Run the analysis

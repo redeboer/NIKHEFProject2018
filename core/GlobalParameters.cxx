@@ -1,5 +1,5 @@
 // Author: Remco de Boer
-// Date: June 1st, 2018
+// Date: June 6th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -31,12 +31,13 @@ namespace NIKHEFProject {
 	UShort_t pNRows = 256;
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
-	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track) should have
+	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track) 
 	// IO names
-	// (it is only necessary to provide an input file or directory name)
+	// (it is possibly to only provide an input file or directory name)
 	Bool_t pSimulationData = false;
 	TString pInput(FormatInputString("data"));
 	TString pOutput(FormatOutputString(pInput.Data())); // requires pInput to be set
+	TString pCaloFileName(FormatCaloFileString(pInput.Data())); // requires pInput to be set
 	const Char_t* pSupportedZipExts[] = {"tar","tar.gz","tgz","zip"};
 	const UChar_t pNSupportedZipExts = sizeof(pSupportedZipExts)/sizeof(*pSupportedZipExts);
 	// Structural names
@@ -149,6 +150,7 @@ namespace NIKHEFProject {
 	}
 	TString FormatOutputString(const char* name)
 	{
+		// Strip input string of path
 		TString str(GetFileName(name));
 		str.Remove( 0, str.First('/')+1 ); // remove path
 		str.Prepend("output/");
@@ -158,6 +160,13 @@ namespace NIKHEFProject {
 			str.Remove( str.Last('.'), str.Sizeof() );
 		}
 		str.Append(".root");
+		return str;
+	}
+	// File that adds "_calo" into input file string (so only works for an input DIRECTORY)
+	TString FormatCaloFileString(const char* name)
+	{
+		TString str(name);
+		str += "_calo.txt";
 		return str;
 	}
 	// Function that returns all characters before the last '/'
@@ -210,7 +219,7 @@ namespace NIKHEFProject {
 		cout<<endl;
 		cout<<"===================| Reading parameters  |===================="<<endl<<endl;
 		Int_t option;
-		while ( (option=getopt(argc,argv,"esi:o:")) != -1) switch (option) {
+		while ( (option=getopt(argc,argv,"esi:o:c:")) != -1) switch (option) {
 			case 's':
 				pSimulationData = true;
 				cout<<"Analysing simulation data from text file"<<endl;
@@ -229,6 +238,10 @@ namespace NIKHEFProject {
 				pOutput = optarg;
 				// cout<<"Output file name set to: "<<pOutput<<endl; // already printed in TClipboard constructor
 				break;
+			case 'c':
+				pCaloFileName = optarg;
+				cout << "Calorimeter data file set to: \"" << pCaloFileName << "\"" << endl;
+				break;
 		}
 	}
 	void Help()
@@ -241,8 +254,8 @@ namespace NIKHEFProject {
 	}
 	string GetTimeFormat(UInt_t t)
 	{
-		if(t>3600) sprintf(pBuffer,"%uh%2um%2us",t/3600,t/60%3600,t%60);
-		else if(t>60) sprintf(pBuffer,"%2um%2us",t/60%3600,t%60);
+		if(t>3600) sprintf(pBuffer,"%uh%2um%2us",t/3600,t%3600/60,t%60);
+		else if(t>60) sprintf(pBuffer,"%2um%2us",t/60,t%60);
 		else sprintf(pBuffer,"%2us",t);
 		return (string)pBuffer;
 	}
@@ -258,11 +271,13 @@ namespace NIKHEFProject {
 	}
 
 // === MATHEMATICAL FUNCTIONS =======
-	Double_t HoughTransform( Double_t x, Double_t y, Double_t phi ) {
-		// r = x*cos(phi) + y*sin(phi)
+	// Functino that returns 2D Hough transform value: r = x*cos(phi) + y*sin(phi)
+	Double_t HoughTransform( Double_t x, Double_t y, Double_t phi )
+	{
 		return
 			x*Cos(DegToRad()*phi) +
-			y*Sin(DegToRad()*phi); }
+			y*Sin(DegToRad()*phi);
+	}
+	// Function that returns the next power of 2 for some number
 	Int_t PowerOfTwo(Int_t x) { return Power( 2, Ceil(Log2(x)) ); }
-
 } // end of namespace GlobalPars

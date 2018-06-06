@@ -49,11 +49,11 @@
 		fRecPointObj = new TRecPoint(fTrack1,fTrack2,fRecPoint.X(),fRecPoint.Y(),fRecPoint.Z());
 		fClipboard->Put(fRecPointObj);
 		// Add energy if available
-		fCaloList = (TCaloList_t*)fClipboard->Get("calorimeter");
+		fCaloList = (TCaloEventList_t*)fClipboard->Get("calorimeter");
 		if(fCaloList->size()==1) {
 			if(fDebug && fCaloList->size()!=1 ) cout << "Warning: two calorimeters in clipboard" << endl;
-			fCalo = (TCalo*)*fCaloList->begin();
-			fRecPointObj->SetEnergyLoss(pBeamEnergy-fCalo->GetEnergy());
+			fCaloEvent = (TCaloEvent*)*fCaloList->begin();
+			fRecPointObj->SetEnergyLoss(pBeamEnergy-fCaloEvent->GetEnergy());
 		}
 		// SUCCESS: if entire procedure has been run
 		return Success;
