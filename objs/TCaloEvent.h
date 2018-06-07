@@ -39,7 +39,7 @@ public:
 	Double_t GetEnergyFit() const;
 	Short_t GetValue(UShort_t) const;
 	TH1S* GetHistogram() const;
-	TF1* GetFit() const;
+	TF1* GetFit(UChar_t i=0) const;
 	// Modify major values
 	void SetEventNumber(UInt_t);
 	void SetTimestamp(ULong64_t);
@@ -48,7 +48,7 @@ public:
 	// Modify measurement data
 	void AddValue(Short_t); 
 	void SetValue(UShort_t, Short_t);
-	TF1* Fit();
+	void Fit();
 	// Information
 	void Print();
 	void WriteHistograms();

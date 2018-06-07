@@ -254,8 +254,8 @@ namespace NIKHEFProject {
 	}
 	string GetTimeFormat(UInt_t t)
 	{
-		if(t>3600) sprintf(pBuffer,"%uh%2um%2us",t/3600,t%3600/60,t%60);
-		else if(t>60) sprintf(pBuffer,"%2um%2us",t/60,t%60);
+		if(t>3600) sprintf(pBuffer,"%uh%02um%02us",t/3600,t%3600/60,t%60);
+		else if(t>60) sprintf(pBuffer,"%2um%02us",t/60,t%60);
 		else sprintf(pBuffer,"%2us",t);
 		return (string)pBuffer;
 	}

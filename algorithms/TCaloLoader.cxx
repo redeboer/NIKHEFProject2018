@@ -9,6 +9,7 @@
 // === INCLUDES =======
 	#include "TCaloLoader.h"
 	#include "TF1.h"
+	#include "TList.h"
 	#include <iostream>
 	#include <stdio.h>
 	using namespace std;
@@ -58,18 +59,23 @@
 				printf("    Energy (sum): %.0f\n", fCaloEvent->GetEnergy() );
 			}
 			// output if fit has been performed
+			fCaloEvent->Fit(); // (UN)COMMENT THIS IF NO FIT COMPUTATION
+			TList* list = fCaloEvent->GetHistogram()->GetListOfFunctions();
+			TIter next(list);
 			TF1* fit = NULL;
-			// fit = fCaloEvent->Fit(); // COMMENT THIS IF NO FIT COMPUTATION
-			if(fit) {
-				fEnergySpectrumFit->Fill(fCaloEvent->GetEnergy());
+			if(fCaloEvent->GetFit()) {
+				fEnergySpectrumFit->Fill(fCaloEvent->GetEnergyFit());
+				if(fDebug) printf("  Energy (fit): %.0f\n", fCaloEvent->GetEnergyFit());
+			}
+			while( (fit = (TF1*)next()) ) {
 				// debugging output
 				if(fDebug) {
-					printf("    Energy (fit): %.0f\n", fCaloEvent->GetEnergyFit() );
+					printf("  Fit function \"%s\"\n", fit->GetName() );
 					printf("    NDF:         %.3f\n", fit->GetNDF() );
 					printf("    Chi squared: %.3f\n", fit->GetChisquare() ); 
-					printf("    Parameter 0: %.3f +/- %.3f\n", fit->GetParameter(0), fit->GetParError(0) );
-					printf("    Parameter 1: %.3f +/- %.3f\n", fit->GetParameter(1), fit->GetParError(1) );
-					printf("    Parameter 2: %.3f +/- %.3f\n", fit->GetParameter(2), fit->GetParError(2) );
+					printf("    Parameter 0: %.7f +/- %.7f\n", fit->GetParameter(0), fit->GetParError(0) );
+					printf("    Parameter 1: %.5f +/- %.5f\n", fit->GetParameter(1), fit->GetParError(1) );
+					printf("    Parameter 2: %.5f +/- %.5f\n", fit->GetParameter(2), fit->GetParError(2) );
 					printf("    Percentage difference: %.1f%%\n",
 						(1-fCaloEvent->GetEnergy()/fCaloEvent->GetEnergyFit())*100 );
 				}

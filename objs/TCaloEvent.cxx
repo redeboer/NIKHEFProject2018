@@ -27,11 +27,12 @@
 		}
 	}
 	TH1S* TCaloEvent::GetHistogram() const { return fHist; }
-	TF1* TCaloEvent::GetFit() const
+	TF1* TCaloEvent::GetFit(UChar_t i) const
 	{
 		if(!fHist) return NULL;
 		if(!fHist->GetListOfFunctions()) return NULL;
-		return (TF1*)fHist->GetListOfFunctions()->At(0);
+		if(i>=fHist->GetListOfFunctions()->GetSize()) return NULL;
+		return (TF1*)fHist->GetListOfFunctions()->At(i);
 	}
 	Double_t TCaloEvent::GetEnergy() const { return fEnergy; }
 	Double_t TCaloEvent::GetEnergyFit() const { return fEnergyFit; }
@@ -52,30 +53,46 @@
 			cout << "No histogram available" << endl;
 		}
 	}
-	TF1* TCaloEvent::Fit()
+	void TCaloEvent::Fit()
 	{
 		// Check if data is available
 		if(!fHist) {
 			cout << "Fit error: no calo data available!" << endl;
-			return NULL;
+			return;
 		}
-		// Difine fitting function: E_0*t^a*e^(-bt)
-		TF1* fit = new TF1("f1",
+		// Difine fitting function:
+		// (Lera's function: "[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)")
+		TF1* fit1 = new TF1("fit",
 			"[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
 			fHist->GetXaxis()->GetXmin(),
 			fHist->GetXaxis()->GetXmax() );
-		fit->SetParameter(0,1);
-		fit->SetParameter(1,0);
-		fit->SetParameter(1,0);
-		// Fit histogram with fit function and compute energy
-		fHist->Fit(fit,"Q0");
-		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram
-		// Compute integral of function
-		fEnergyFit = fit->Integral(
+		// (Landau function: "[0]*TMath::Landau(x,[1],[2])")
+		TF1* fit2 = new TF1("landau",
+			"[0]*TMath::Landau(x,[1],[2])",
 			fHist->GetXaxis()->GetXmin(),
 			fHist->GetXaxis()->GetXmax() );
-		// Return fit result upon success
-		return fit;
+		fit2->SetLineColor(kBlue);
+		// Set estimated fit parameters
+		Int_t maxbin = fHist->GetMaximumBin();
+		Double_t maxloc = fHist->GetBinCenter(maxbin);
+		fit1->SetParameters( // Lera's function
+			3.5e-9*fHist->GetBinContent(maxbin),
+			4., 1.14e-2 );
+		fit2->SetParameters( // Landau curve
+			5.2*fHist->GetBinContent(maxbin),
+			1.1*maxloc,    // location of peak
+			0.3*maxloc // sigma
+		);
+		// Fit histogram with fit function and compute energy
+		fHist->Fit(fit1,"QN"); // comment this line if you want to see if your fit parameter estimates are close
+		fHist->Fit(fit2,"QN"); // comment this line if you want to see if your fit parameter estimates are close
+		fHist->GetListOfFunctions()->Add(fit1);
+		fHist->GetListOfFunctions()->Add(fit2);
+		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram
+		// Compute integral of function
+		fEnergyFit = fit1->Integral(
+			fHist->GetXaxis()->GetXmin(),
+			fHist->GetXaxis()->GetXmax() );
 	}
 
 // === INFORMATION FUNCTIONS =======
