@@ -277,6 +277,8 @@
 	{
 		// Abort if hidden file (starts with '.')
 		if(input.Length()>1&&input(0)=='.') return;
+		//abort if no other folders but only files
+		if(input == '.') return; 
 		// Get pwd and replace with relative path as entered by pInput
 		if(fDebug) cout << "Applying AddFileNames to \"" << fCurrentDir+input << "\"" << endl;
 		// Either continue recursively on directory or add/extract files
