@@ -90,12 +90,11 @@ Bool_t TIntersectTracks::Intersect() {
 	fDenominator = 1/fDenominator;
 
 	// Alternative methode berekening van reconstruct point.
-	fTime2 = ((fD1.X() * (fP1.Y() - fP2.Y())) - (fP2.Y() * (fP2.Y() - fP1.X()))) / ((fD1.X() * fD2.Y()) - (fP2.Y() * fD2.X()));
-	fTime1 = ((fD2.X() * fTime1) + fP2.X() - fP1.X()) / fD1.X();
+	fTime2 = ((fD1.X() * (fP1.Y() - fP2.Y())) - (fP2.Y() * (fP2.X() - fP1.X()))) / ((fD1.X() * fD2.Y()) - (fP2.Y() * fD2.X()));
+	fTime1 = ((fD2.X() * fTime2) + fP2.X() - fP1.X()) / fD1.X();
 
 	fA1 = fP1 + fP1 + fD1 * fTime1;
 	fA2 = fP2 + fD2 * fTime2;	
-	fA1.SetX(fA1.X()/100);
 	fRecPointAlt = fA1;
 
 	// Find distance between the two nearest points

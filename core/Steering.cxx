@@ -63,9 +63,9 @@ Int_t main(Int_t argc, char *argv[]) {
 		analysis->Add( new TIntersectTracks(clipboard,false) );
 		analysis->Add( new TWriteReconstruction(clipboard,false) );
 	} else {
-		 analysis->Add( new TCaloLoader(clipboard,false) );
-		 analysis->Add( new TCaloFitter(clipboard,false) );
-		 analysis->Add( new TCaloWriter(clipboard,false) );
+		//  analysis->Add( new TCaloLoader(clipboard,false) );
+		//  analysis->Add( new TCaloFitter(clipboard,false) );
+		//  analysis->Add( new TCaloWriter(clipboard,false) );
 		//  analysis->Add( new TTimepixLoader(clipboard,true) );
 		//  analysis->Add( new TRecogniseTracks(clipboard,false) );
 		//  analysis->Add( new TWriteTimepixHist(clipboard,false) );

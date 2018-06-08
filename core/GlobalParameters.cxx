@@ -52,9 +52,9 @@ namespace NIKHEFProject {
 	Int_t pShowStats = 1<<9; // means: display no statistics pad
 	// Reconstruction parameters
 	const UShort_t pResolution = 100;
-	const Double_t
-		pXmin = 0, pYmin = 0, pZmin = 0,
-		pXmax =  500, pYmax = 1000, pZmax = 1000;
+	const Double_t	
+		pXmin = 2195, pYmin = 0  , pZmin = 0,
+		pXmax =  2197, pYmax = 1000, pZmax = 1000;
 	// Event counters
 	UInt_t pFileNumber = 0;
 	UInt_t pEventNumber = 0;
