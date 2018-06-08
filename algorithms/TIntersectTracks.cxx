@@ -1,5 +1,6 @@
 // Author: Remco de Boer
-// Date: May 26th, 2018
+// Modified by: Maarten Hammer
+// Date: June 8th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -46,10 +47,10 @@
 		if( fTrackIter==fTrackList->end() ) return NoData;
 		// Reconstruct point of intersection and put to clipboard
 		if(!Intersect()) return NoData;
-		fRecPointObj = new TRecPoint(fTrack1,fTrack2,fRecPoint.X(),fRecPoint.Y(),fRecPoint.Z());
+		fRecPointObj = new TRecPoint(fTrack1,fTrack2,fRecPoint,fRecPointAlt);
 		fClipboard->Put(fRecPointObj);
 		// Add energy if available
-		fCaloList = (TCaloEventList_t*)fClipboard->Get("calorimeter");
+		fCaloList = (TCaloEventList_t*)fClipboard->Get("caloevents");
 		if(fCaloList->size()==1) {
 			if(fDebug && fCaloList->size()!=1 ) cout << "Warning: two calorimeters in clipboard" << endl;
 			fCaloEvent = (TCaloEvent*)*fCaloList->begin();
@@ -87,6 +88,15 @@ Bool_t TIntersectTracks::Intersect() {
 	fDenominator *= fD2sq;
 	fDenominator -= fD1D2*fD1D2;
 	fDenominator = 1/fDenominator;
+
+	// Alternative methode berekening van reconstruct point.
+	fTime2 = ((fD1.X() * (fP1.Y() - fP2.Y())) - (fP2.Y() * (fP2.Y() - fP1.X()))) / ((fD1.X() * fD2.Y()) - (fP2.Y() * fD2.X()));
+	fTime1 = ((fD2.X() * fTime1) + fP2.X() - fP1.X()) / fD1.X();
+
+	fA1 = fP1 + fP1 + fD1 * fTime1;
+	fA2 = fP2 + fD2 * fTime2;	
+	fA1.SetX(fA1.X()/100);
+	fRecPointAlt = fA1;
 
 	// Find distance between the two nearest points
 	fDistance  = Abs(fDcross.Dot(fPdiff));

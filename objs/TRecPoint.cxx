@@ -14,6 +14,7 @@
 
 // === GETTERS =======
 	TVector3& TRecPoint::GetPoint() { return fRecPoint; }
+	TVector3& TRecPoint::GetPointAlt() { return fRecPointAlt; }
 	Double_t TRecPoint::GetEnergyLoss() const { return fEnergyLoss; }
 	TTrack* TRecPoint::GetTrack1() { return fTrack1; }
 	TTrack* TRecPoint::GetTrack2() { return fTrack2; }

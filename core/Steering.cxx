@@ -56,13 +56,12 @@ Int_t main(Int_t argc, char *argv[]) {
 
 	/* -------------| ALGORITHMS |----------- */
 	if(pSimulationData) {
-		//analysis->Add( new TSimulatedEventLoader(clipboard,false) );
-		analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
-		//analysis->Add( new TIntersectTracks(clipboard,false) );
-		//analysis->Add( new TWriteReconstruction(clipboard,false) );
-		//analysis->Add( new TCaloLoader(clipboard,false) );
+		analysis->Add( new TSimulatedEventLoader(clipboard,true) );
+		//analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
+		analysis->Add( new TIntersectTracks(clipboard,true) );
+		analysis->Add( new TWriteReconstruction(clipboard,true) );
 	} else {
-		 analysis->Add( new TCaloLoader(clipboard,false) );
+		//  analysis->Add( new TCaloLoader(clipboard,false) );
 		//  analysis->Add( new TTimepixLoader(clipboard,true) );
 		//  analysis->Add( new TRecogniseTracks(clipboard,false) );
 		//  analysis->Add( new TWriteTimepixHist(clipboard,false) );

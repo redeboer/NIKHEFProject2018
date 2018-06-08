@@ -1,5 +1,6 @@
 // Author: Remco de Boer
-// Date: May 26th, 2018
+// Modified by: Maarten Hammer
+// Date: June 8th 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -44,13 +45,15 @@ private:
 	TRecPoint* fRecPointObj;
 	TTrack* fTrack1;
 	TTrack* fTrack2;
-	TVector3 fRecPoint;
+	TVector3 fRecPoint, fRecPointAlt;
 	TVector3 fP1, fP2, fD1, fD2;
 	TVector3 fN1, fN2;
+	TVector3 fA1, fA2;
 	TVector3 fPdiff, fDcross;
 	Double_t fD1sq, fD2sq, fD1D2;
 	Double_t fDistance;
 	Double_t fDenominator;
+	Double_t fTime1, fTime2;
 
 };
 

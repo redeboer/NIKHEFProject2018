@@ -115,9 +115,9 @@
 				fChiSqXZ2 = fTrack2->GetFitterXZ()->GetChisquare();
 			}
 			// Get reconstructed point info
-			fX = (*fPointIter)->GetPoint().X();
-			fY = (*fPointIter)->GetPoint().Y();
-			fZ = (*fPointIter)->GetPoint().Z();
+			fX = (*fPointIter)->GetPointAlt().X();
+			fY = (*fPointIter)->GetPointAlt().Y();
+			fZ = (*fPointIter)->GetPointAlt().Z();
 			fAngle = TMath::RadToDeg()*ACos( fTrack1->GetDirection().Dot(fTrack2->GetDirection()) );
 			fEloss = (*fPointIter)->GetEnergyLoss();
 			// Fill tree

@@ -24,9 +24,12 @@ public:
 			: fRecPoint(x,y,z), fEnergyLoss(de), fTrack1(NULL), fTrack2(NULL) {}
 		TRecPoint(TTrack* t1, TTrack* t2, Double_t x, Double_t y, Double_t z, Double_t de=0)
 			: fRecPoint(x,y,z), fEnergyLoss(de), fTrack1(t1), fTrack2(t2) {}
+		TRecPoint(TTrack* t1, TTrack* t2, TVector3 vec, TVector3 altvec, Double_t de=0)
+			: fRecPoint(vec), fRecPointAlt(altvec), fEnergyLoss(de), fTrack1(t1), fTrack2(t2) {}
 		~TRecPoint() {}
 	// Getters
 		TVector3& GetPoint();
+		TVector3& GetPointAlt();
 		Double_t GetEnergyLoss() const;
 		TTrack* GetTrack1();
 		TTrack* GetTrack2();
@@ -39,7 +42,8 @@ public:
 		void Print();
 
 private:
-	TVector3 fRecPoint; // point where the particle probably scattered
+	TVector3 fRecPoint;    // point where the particle probably scattered
+	TVector3 fRecPointAlt; // point where the particle probably scattered #TheBetterOne
 	Double_t fEnergyLoss; // reconstructed energy loss at that point
 	TTrack* fTrack1; // track in TPC 1 that was used to reconstruct this point
 	TTrack* fTrack2; // track in TPC 2 that was used to reconstruct this point

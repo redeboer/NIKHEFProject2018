@@ -53,8 +53,8 @@ namespace NIKHEFProject {
 	// Reconstruction parameters
 	const UShort_t pResolution = 100;
 	const Double_t
-		pXmin = -1500, pYmin = 0  , pZmin = 0,
-		pXmax =  1200, pYmax = 350, pZmax = 450;
+		pXmin = 0, pYmin = 0, pZmin = 0,
+		pXmax =  500, pYmax = 1000, pZmax = 1000;
 	// Event counters
 	UInt_t pFileNumber = 0;
 	UInt_t pEventNumber = 0;
