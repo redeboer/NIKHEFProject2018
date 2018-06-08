@@ -14,7 +14,7 @@
 	#include "TBeamObject.h"
 	#include "TTimepix.h"
 	#include "TString.h"
-	#include "TH1S.h"
+	#include "TH1D.h"
 
 // === CLASS DECLARATION =======
 class TCaloEvent : public TBeamObject {
@@ -28,7 +28,7 @@ public:
 			TString name, title;
 			name .Form("event_%u", fEventNumber);
 			title.Form("Calorimeter data for event %u;Timesteps;Counts", fEventNumber);
-			fHist = new TH1S( name, title, npoints, 0, npoints );
+			fHist = new TH1D( name, title, npoints, 0, npoints );
 		}
 	~TCaloEvent() { if(fHist) delete fHist; }
 	// Getters for major values
@@ -38,7 +38,7 @@ public:
 	// Getters for measurement data
 	Double_t GetEnergyFit() const;
 	Short_t GetValue(UShort_t) const;
-	TH1S* GetHistogram() const;
+	TH1D* GetHistogram() const;
 	TF1* GetFit(UChar_t i=0) const;
 	// Modify major values
 	void SetEventNumber(UInt_t);
@@ -60,7 +60,7 @@ private:
 	Double_t fEnergy;
 	// Measurement data (if available)
 	Double_t fEnergyFit;
-	TH1S* fHist;
+	TH1D* fHist;
 
 };
 

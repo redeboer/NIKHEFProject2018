@@ -26,7 +26,7 @@
 			return NULL;
 		}
 	}
-	TH1S* TCaloEvent::GetHistogram() const { return fHist; }
+	TH1D* TCaloEvent::GetHistogram() const { return fHist; }
 	TF1* TCaloEvent::GetFit(UChar_t i) const
 	{
 		if(!fHist) return NULL;
@@ -60,17 +60,17 @@
 			cout << "Fit error: no calo data available!" << endl;
 			return;
 		}
+		// Compute starting point of fit range
+		Int_t i=1;
+		while( fHist->GetBinContent(i) < pTriggerCaloFit ) i++;
+		Double_t startval = fHist->GetBinCenter(i);
 		// Difine fitting function:
-		// (Lera's function: "[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)")
-		TF1* fit1 = new TF1("fit",
-			"[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
-			fHist->GetXaxis()->GetXmin(),
-			fHist->GetXaxis()->GetXmax() );
+		// (Lera's function: "A x^a e^(-bx)")
+		TF1* fit1 = new TF1("lsp","[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
+			startval, fHist->GetXaxis()->GetXmax() );
 		// (Landau function: "[0]*TMath::Landau(x,[1],[2])")
-		TF1* fit2 = new TF1("landau",
-			"[0]*TMath::Landau(x,[1],[2])",
-			fHist->GetXaxis()->GetXmin(),
-			fHist->GetXaxis()->GetXmax() );
+		TF1* fit2 = new TF1("landau","[0]*TMath::Landau(x,[1],[2])",
+			startval, fHist->GetXaxis()->GetXmax() );
 		fit2->SetLineColor(kBlue);
 		// Set estimated fit parameters
 		Int_t maxbin = fHist->GetMaximumBin();
@@ -84,8 +84,8 @@
 			0.3*maxloc // sigma
 		);
 		// Fit histogram with fit function and compute energy
-		fHist->Fit(fit1,"QN"); // comment this line if you want to see if your fit parameter estimates are close
-		fHist->Fit(fit2,"QN"); // comment this line if you want to see if your fit parameter estimates are close
+		fHist->Fit(fit1,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
+		fHist->Fit(fit2,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
 		fHist->GetListOfFunctions()->Add(fit1);
 		fHist->GetListOfFunctions()->Add(fit2);
 		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram

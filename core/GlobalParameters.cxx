@@ -31,7 +31,8 @@ namespace NIKHEFProject {
 	UShort_t pNRows = 256;
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
-	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track) 
+	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track)
+	const Double_t pTriggerCaloFit = 5; // bin content value that determines starting point of fit range
 	// IO names
 	// (it is possibly to only provide an input file or directory name)
 	Bool_t pSimulationData = false;

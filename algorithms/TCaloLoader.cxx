@@ -39,14 +39,14 @@
 		// Create TTree
 		fTree = new TTree("calo_fits","fit results of calo events");
 		fTree->Branch("energy_sum",   &fEnergy0,"energy_sum/D");
-		fTree->Branch("energy_fit",   &fEnergy1,"energy_fit/D");
+		fTree->Branch("energy_lsp",   &fEnergy1,"energy_lsp/D");
 		fTree->Branch("energy_landau",&fEnergy2,"energy_landau/D");
-		fTree->Branch("chi2_fit",     &fChiSq1, "chi2_fit/D");
+		fTree->Branch("chi2_lsp",     &fChiSq1, "chi2_lsp/D");
 		fTree->Branch("chi2_landau",  &fChiSq2, "chi2_landau/D");
-		fTree->Branch("ndf_fit",      &fNDF1,   "ndf_fit/I");
+		fTree->Branch("ndf_lsp",      &fNDF1,   "ndf_lsp/I");
 		fTree->Branch("ndf_landau",   &fNDF2,   "ndf_landau/I");
-		fTree->Branch("chi2div_fit",   &fChiSq1div,"chi2div_fit/D");
-		fTree->Branch("chi2div_landau",&fChiSq2div,"chi2div_landau/D");
+		fTree->Branch("chi2ndof_lsp",   &fChiSq1div,"chi2ndof_lsp/D");
+		fTree->Branch("chi2ndof_landau",&fChiSq2div,"chi2ndof_landau/D");
 	}
 
 	// RUN FUNCTION: read the next calo event in the text file and create a TCaloEvent from it

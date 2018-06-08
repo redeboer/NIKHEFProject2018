@@ -35,6 +35,7 @@ namespace NIKHEFProject {
 	// Fit parameters
 	extern UChar_t pMaxNFits;
 	extern UChar_t pMinClusterPixels;
+	extern const Double_t pTriggerCaloFit;
 	// IO names
 	extern TString pInput;
 	extern TString pOutput;        // determined from input file name
@@ -47,6 +48,7 @@ namespace NIKHEFProject {
 	extern const Char_t* pTPC2id;
 	extern const Char_t* pTreeName;
 	extern const Char_t* pTreeTitle;
+	// Calo fit options
 	// Draw options
 	extern const Char_t* pDrawHistoOption;
 	extern const Char_t* pDrawGraphOption;
