@@ -16,14 +16,14 @@
 // === GETTERS =======
 	UInt_t TCaloEvent::GetEventNumber() const { return fEventNumber; }
 	ULong64_t TCaloEvent::GetTimestamp() const { return fTimestamp; }
-	Short_t TCaloEvent::GetValue(UShort_t i) const
+	Double_t TCaloEvent::GetValue(Int_t i) const
 	{
 		if(fHist) {
 			++i;
 			return fHist->GetBinContent(i);
 		} else {
 			cout << "No histogram available" << endl;
-			return NULL;
+			return 0;
 		}
 	}
 	TH1D* TCaloEvent::GetHistogram() const { return fHist; }
@@ -44,7 +44,7 @@
 	void TCaloEvent::SetEnergyFit(Double_t e) { fEnergyFit = e; }
 
 // === MODIFY MAJOR VALUES =======
-	void TCaloEvent::SetValue(UShort_t i, Short_t val)
+	void TCaloEvent::SetValue(Int_t i, Double_t val)
 	{
 		if(fHist) {
 			++i;
@@ -52,47 +52,6 @@
 		} else {
 			cout << "No histogram available" << endl;
 		}
-	}
-	void TCaloEvent::Fit()
-	{
-		// Check if data is available
-		if(!fHist) {
-			cout << "Fit error: no calo data available!" << endl;
-			return;
-		}
-		// Compute starting point of fit range
-		Int_t i=1;
-		while( fHist->GetBinContent(i) < pTriggerCaloFit ) i++;
-		Double_t startval = fHist->GetBinCenter(i);
-		// Difine fitting function:
-		// (Lera's function: "A x^a e^(-bx)")
-		TF1* fit1 = new TF1("lsp","[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
-			startval, fHist->GetXaxis()->GetXmax() );
-		// (Landau function: "[0]*TMath::Landau(x,[1],[2])")
-		TF1* fit2 = new TF1("landau","[0]*TMath::Landau(x,[1],[2])",
-			startval, fHist->GetXaxis()->GetXmax() );
-		fit2->SetLineColor(kBlue);
-		// Set estimated fit parameters
-		Int_t maxbin = fHist->GetMaximumBin();
-		Double_t maxloc = fHist->GetBinCenter(maxbin);
-		fit1->SetParameters( // Lera's function
-			3.5e-9*fHist->GetBinContent(maxbin),
-			4., 1.14e-2 );
-		fit2->SetParameters( // Landau curve
-			5.2*fHist->GetBinContent(maxbin),
-			1.1*maxloc,    // location of peak
-			0.3*maxloc // sigma
-		);
-		// Fit histogram with fit function and compute energy
-		fHist->Fit(fit1,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
-		fHist->Fit(fit2,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
-		fHist->GetListOfFunctions()->Add(fit1);
-		fHist->GetListOfFunctions()->Add(fit2);
-		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram
-		// Compute integral of function
-		fEnergyFit = fit1->Integral(
-			fHist->GetXaxis()->GetXmin(),
-			fHist->GetXaxis()->GetXmax() );
 	}
 
 // === INFORMATION FUNCTIONS =======
@@ -106,7 +65,7 @@
 		}
 	}
 	// Note that the path to write to should be set first
-	void TCaloEvent::WriteHistograms()
+	void TCaloEvent::WriteHistogram()
 	{
 		if(fHist) fHist->Write();
 	}

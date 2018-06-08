@@ -37,7 +37,7 @@ public:
 	Double_t GetEnergy() const;
 	// Getters for measurement data
 	Double_t GetEnergyFit() const;
-	Short_t GetValue(UShort_t) const;
+	Double_t GetValue(Int_t) const;
 	TH1D* GetHistogram() const;
 	TF1* GetFit(UChar_t i=0) const;
 	// Modify major values
@@ -47,11 +47,10 @@ public:
 	void SetEnergyFit(Double_t);
 	// Modify measurement data
 	void AddValue(Short_t); 
-	void SetValue(UShort_t, Short_t);
-	void Fit();
+	void SetValue(Int_t, Double_t);
 	// Information
 	void Print();
-	void WriteHistograms();
+	void WriteHistogram();
 
 private:
 	// Major info
@@ -66,6 +65,6 @@ private:
 
 // === TYPE DEFINITIONS =======
 	typedef std::list<TCaloEvent*> TCaloEventList_t;
-	typedef std::list<TCaloEvent*>::iterator TCaloIter_t;
+	typedef std::list<TCaloEvent*>::iterator TCaloEventIter_t;
 
 #endif // TCALOEVENT_H

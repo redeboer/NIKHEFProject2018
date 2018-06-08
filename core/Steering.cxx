@@ -19,6 +19,8 @@
 
 // === INCLUDED ALGORITHMS =======
 	#include "TCaloLoader.h"
+	#include "TCaloFitter.h"
+	#include "TCaloWriter.h"
 	#include "TTimepixLoader.h"
 	#include "TSimulatedCaloLoader.h"
 	#include "TSimulatedEventLoader.h"
@@ -56,12 +58,14 @@ Int_t main(Int_t argc, char *argv[]) {
 
 	/* -------------| ALGORITHMS |----------- */
 	if(pSimulationData) {
-		analysis->Add( new TSimulatedEventLoader(clipboard,true) );
-		//analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
-		analysis->Add( new TIntersectTracks(clipboard,true) );
-		analysis->Add( new TWriteReconstruction(clipboard,true) );
+		analysis->Add( new TSimulatedEventLoader(clipboard,false) );
+		// analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
+		analysis->Add( new TIntersectTracks(clipboard,false) );
+		analysis->Add( new TWriteReconstruction(clipboard,false) );
 	} else {
-		//  analysis->Add( new TCaloLoader(clipboard,false) );
+		 analysis->Add( new TCaloLoader(clipboard,false) );
+		 analysis->Add( new TCaloFitter(clipboard,false) );
+		 analysis->Add( new TCaloWriter(clipboard,false) );
 		//  analysis->Add( new TTimepixLoader(clipboard,true) );
 		//  analysis->Add( new TRecogniseTracks(clipboard,false) );
 		//  analysis->Add( new TWriteTimepixHist(clipboard,false) );
