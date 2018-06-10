@@ -1,4 +1,4 @@
-# NIKHEFProject2018
+# NIKHEF Project 2018
 
 Thank you for your interest in this C++/ROOT framework analyse beam data. If you read this, you are probably a student at NIKHEF doing research on some particle physics project. If so, and you are in the preliminary stages of your research, this documentation could be useful, even if you eventually decide the framework cannot be implemented in your research.
 
@@ -39,7 +39,7 @@ In preparation to the data taking, we also performed simulations in Geant. Outpu
 
 ![Algorithm structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_algorithms.png "Algorithm structure")
 
-The order of processing is, of course, sequentially, but the arrows here denote the which altorithms need rely on the output of the previous ones..
+The order of processing is, of course, sequentially, but the arrows here denote the which altorithms need rely on the output of the previous ones.
 
 In our project, one of our TPCs unfortunately broke down, so in the end, we were not able to intersect tracks. The TPC after the sample was therefore removed, so the intersecting algorithms became redundant. Also, it turned out to be difficult to properly trigger the remaining TPC, so a the z-component could also not be computed. The output was therefore a 1-dimensional profile of energy loss in the sample.
 
