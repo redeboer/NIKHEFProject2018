@@ -49,8 +49,8 @@ Compiling everything is done easily using `make`, which simply follows the `Make
 
 - `./execute`
 - `./execute -i "<folder or txt file you want to analyse>"`
-- `./execute -i "<folder you want to analyse>" -c <location of calo file>`
-- `./execute -i "<folder you want to analyse>" -c <location of calo file> -o <output ROOT file>`
+- `./execute -i "<folder you want to analyse>" -c "<location of calo file>"`
+- `./execute -i "<folder you want to analyse>" -c "<location of calo file>" -o <output ROOT file>`
 
 In the first case, the default input file as defined in `GlobalParameters.cxx` is used. The calorimeter data file name is then just set to 'input file name' + `_calo.txt` and the output file name `output/` + 'input file name' + `.root`. This behaviour can be changed in the paramters. Otherwise, you can specify the calo file name and/or the output file name using option `-o` or option `-c` respectively.
 

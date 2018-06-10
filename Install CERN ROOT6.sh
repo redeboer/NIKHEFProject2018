@@ -1,7 +1,7 @@
 # Author: Remco de Boer
 # Data: 19/05/2018
 
-# Instructions to install the latest CERN ROOT Production ("Pro") distribution on a Linux system, including Minuit. The Pro version was 6.12/06 (2018-02-09) at the time of writing, but the procedure should work as well when later distributions come out.
+# Instructions to install the latest CERN ROOT Production ("Pro") distribution, including Minuit, on Ubuntu. The Pro version was 6.12/06 (2018-02-09) at the time of writing, but the procedure should work as well when later distributions come out.
 
 # You can use these instructions as well as a bash script. Run using:
 # ./"Install CERN ROOT.sh"
@@ -21,6 +21,11 @@ else
 	echo "--> Installing version: v6-$ROOTVERSION
 	"
 fi
+
+# Install prerequisites
+sudo apt-get install git dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev
+# Optional packages
+sudo apt-get install gfortran libssl-dev libpcre3-dev xlibmesa-glu-dev libglew1.5-dev libftgl-dev libmysqlclient-dev libfftw3-dev libcfitsio-dev graphviz-dev libavahi-compat-libdnssd-dev libldap2-dev python-dev libxml2-dev libkrb5-dev libgsl0-dev libqt4-dev
 
 # Clone entire ROOT source from the public Git repository
 cd /usr/local/
@@ -56,16 +61,14 @@ cd /usr/local/root
 source bin/thisroot.sh
 
 # Information about adding ROOT to your bash. BE CAREFUL IF YOU COPY FROM THIS FILE: REPLACE \$ BY $
-read -p "
-Installation of ROOT completed!
-Now, please copy the following lines (Ctrl+Shift+C)
 
+read -p "
+Installation of ROOT completed! Upon pressing ENTER, the path variables for ROOT will be set in your .bashrc file. Gedit will be opened so you can check the result."
+echo "
 # CERN ROOT
 export ROOTSYS=/usr/local/root
 export PATH=\$ROOTSYS/bin:\$PATH
 export PYTHONDIR=\$ROOTSYS
 export LD_LIBRARY_PATH=\$ROOTSYS/lib:\$PYTHONDIR/lib:\$ROOTSYS/bindings/pyroot:\$LD_LIBRARY_PATH
-export PYTHONPATH=\$ROOTSYS/lib:\$PYTHONPATH:\$ROOTSYS/bindings/pyroot
-
-and paste them to the end of your bash file (~/bashrc). It will be opened when you press enter."
-nano ~/.bashrc
+export PYTHONPATH=\$ROOTSYS/lib:\$PYTHONPATH:\$ROOTSYS/bindings/pyroot" >> ~/.bashrc
+gedit ~/.bashrc
