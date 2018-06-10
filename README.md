@@ -37,7 +37,7 @@ In 2018, we worked on a setup to analyse a proton beam (the proton beam of the K
 
 In preparation to the data taking, we also performed simulations in Geant. Output of these simulations was also analysed using this framework. The algorithms we developed were therefore loaded in the following way:
 
-![Algorithm structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_basic.png "Algorithm structure")
+![Algorithm structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_algorithms.png "Algorithm structure")
 
 The order of processing is, of course, sequentially, but the arrows here denote the which altorithms need rely on the output of the previous ones..
 
