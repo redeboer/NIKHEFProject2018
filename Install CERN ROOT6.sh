@@ -9,7 +9,8 @@
 # To see which options are used by default, see: https://root.cern.ch/building-root
 
 # Decide which version to install
-read -p "This script will install CERN ROOT 6, version 6.12/06.
+read -p "This script will install CERN ROOT 6, version 6.12/06. First, verify that you meet the build requirements: https://root.cern.ch/build-prerequisites. Particularly, make sure that you have installed the right packages!
+
 Check out the latest versions at https://root.cern.ch/downloading-root. If you want this version, press enter, otherwise, enter the version you want here: v6-" ROOTVERSION
 if [ -n $ROOTVERSION ]
 then
@@ -36,15 +37,25 @@ cd compile
 
 # Build source material and make install
 cmake -Dminuit=ON -Dminuit2=ON -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/root ..
+# Also possible: ccmake, which gives an overview of the options
 make -j$(nproc)
+read -p "
+
+Source material built. Press ENTER to \"make install\" ROOT.
+"
+
 sudo make install
+
+# Remove build files
+cd ..
+rm -rf compile
 
 # Install ROOT: tell Ubuntu how to run ROOT
 cd /usr/local/root
 . bin/thisroot.sh
 source bin/thisroot.sh
 
-# Information about adding ROOT to your bash
+# Information about adding ROOT to your bash. BE CAREFUL IF YOU COPY FROM THIS FILE: REPLACE \$ BY $
 read -p "
 Installation of ROOT completed!
 Now, please copy the following lines (Ctrl+Shift+C)
