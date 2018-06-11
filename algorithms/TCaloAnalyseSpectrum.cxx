@@ -21,10 +21,7 @@
 	void TCaloAnalyseSpectrum::Initialise() {}
 
 	// RUN FUNCTION: nothin to run
-	StatusCode TCaloAnalyseSpectrum::Run()
-	{
-		// return Finished; // uncomment if this is the only algorithm
-	}
+	StatusCode TCaloAnalyseSpectrum::Run() { return Success; }
 
 	// FINALISE FUNCTION: open TTree from TCaloWriter and analyse it. 
 	void TCaloAnalyseSpectrum::Finalise()

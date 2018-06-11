@@ -40,6 +40,18 @@
 		// (this should be done in any algorithm that is loaded in TAnalysis first)
 		fFileIterator = fInputFilenames.begin();
 		pTotalFiles = fInputFilenames.size();
+
+		// As a favor, set the timepix format so other algorithms can use it
+		UChar_t i, imax=5;
+		while( i<imax && fFileIterator!=fInputFilenames.end() ) {
+			DetermineFileFormat( (*fFileIterator).c_str() );
+			++fFileIterator;
+			++i;
+		}
+
+		// Reset file iterator
+		fFileIterator = fInputFilenames.begin();
+
 	}
 
 	// RUN FUNCTION: in each event, load one frame of data from all devices

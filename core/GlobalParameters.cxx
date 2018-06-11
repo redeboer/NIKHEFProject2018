@@ -108,7 +108,7 @@ namespace NIKHEFProject {
 		}
 		return pMatrixFormat;
 	}
-	// Function that determines timepix size and file format of txt file
+	// Function that determines timepix size (nrows and ncols) and file format of txt file. 
 	Bool_t DetermineFileFormat(const char* filename, Bool_t debug)
 	{
 		if(debug) cout << "  Determining timepix file format of \"" << filename <<  "\"" << endl;
@@ -316,7 +316,7 @@ namespace NIKHEFProject {
 		cout<<endl;
 		cout<<"===================| Reading parameters  |===================="<<endl<<endl;
 		Int_t option;
-		while ( (option=getopt(argc,argv,"esi:o:c:")) != -1) switch (option) {
+		while ( (option=getopt(argc,argv,"se:i:o:c:m:")) != -1) switch (option) {
 			case 's':
 				pSimulationData = true;
 				cout<<"Analysing simulation data from text file"<<endl;
@@ -329,7 +329,10 @@ namespace NIKHEFProject {
 				pInput = FormatInputString(optarg);
 				if(pSimulationData) cout<<"Reading simulation from: "<<pInput<<endl;
 				else cout<<"Reading measurement data from: "<<pInput<<endl;
+				// Set dependent file names
 				pOutput = FormatOutputString(pInput.Data());
+				pOutputCalo = FormatOutputCaloString(pInput.Data());
+				pMaskFileName = FormatMaskFileString(pInput.Data());
 				break;
 			case 'o':
 				pOutput = optarg;
