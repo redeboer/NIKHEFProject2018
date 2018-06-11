@@ -154,7 +154,7 @@
 		OpenFile(filestream,filename);
 		// Read lines
 		UShort_t row, col, adc;
-		if(fMatrixFormat) { // if in matrix format
+		if(pMatrixFormat) { // if in matrix format
 			for( row=0; row<timepix->GetNRows(); row++ ) {
 				for( col=0; col<timepix->GetNColumns(); col++ ) {
 					filestream >> adc;

@@ -46,7 +46,6 @@ private:
 	Bool_t ReadDSC(const char*);
 	Bool_t LoadTimepix(const char*);
 	// Data members
-	Bool_t fMatrixFormat;
 	Bool_t fHasDSC;
 	TString fCurrentDir;
 	std::list<std::string> fInputFilenames;
