@@ -50,13 +50,11 @@ private:
 	Double_t fPy1,fPz1,fVy1,fVz1;
 	Double_t fX, fY, fZ, fEloss;
 	// Graph and histograms
-	TH1S* fRecPoint1D;
+	TH1S* fRecPoints1D;
 	TH1D* fRecEnergy1D;
 	TH2I* fTPC1pointsYZ; // histogram of fState
-	TH3S* fRecPoints3D;
-	TH2S* fRecPoints3Dyz;
-	TH3D* fRecEnergy3D;
-	TH2D* fRecEnergy3Dyz;
+	TH2S* fRecPoints2D;
+	TH2D* fRecEnergy2D;
 
 };
 

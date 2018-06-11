@@ -39,21 +39,20 @@
 			"TPC1pointsYZ","Points of entry TPC1;y (transverse);z (drift dir);count",
 			pResolution, pYmin, pYmax,   // y bins (transverse direction)
 			pResolution, pZmin, pZmax ); // z bins (drift direction)
-		fRecPoints3D = new TH3S(
-			"RecPoints","Distribution of reconstructed points;x (beam dir);y (transverse);z (drift dir)", // name and title
-			pResolution, pXmin, pXmax,   // x bins (beam direction)
+
+		fRecPoints2D = new TH2S(
+			"RecPoints","Distribution of reconstructed points;y (transverse);z (drift dir)", // name and title
 			pResolution, pYmin, pYmax,   // y bins (transverse direction)
 			pResolution, pZmin, pZmax ); // z bins (drift direction)
-		fRecEnergy3D = new TH3D(
-			"RecEnergies","Average energy losses of reconstructed points;x (beam dir);y (transverse);z (drift dir)", // name and title
-			pResolution, pXmin, pXmax,   // x bins (beam direction)
+		fRecEnergy2D = new TH2D(
+			"RecEnergies","Average energy losses of reconstructed points;y (transverse);z (drift dir)", // name and title
 			pResolution, pYmin, pYmax,   // y bins (transverse direction)
 			pResolution, pZmin, pZmax ); // z bins (drift direction)
 
 		// Set drawing options
 		fTPC1pointsYZ->SetOption(pDrawHistoOption);
-		fRecPoints3D ->SetOption(pDrawHistoOption);
-		fRecEnergy3D ->SetOption(pDrawHistoOption);
+		fRecPoints2D ->SetOption(pDrawHistoOption);
+		fRecEnergy2D ->SetOption(pDrawHistoOption);
 	}
 
 	// RUN FUNCTION: load reconstructed points and corresponding tracks and write infor to histograms, the graph and the TTree
@@ -91,8 +90,8 @@
 			fTree->Fill();
 			// Fill histograms and graph
 			fTPC1pointsYZ->Fill(fPy1,fPz1);
-			fRecPoints3D->Fill(fX,fY,fZ);
-			fRecEnergy3D->Fill(fX,fY,fZ,fEloss);
+			fRecPoints2D->Fill(fY,fZ);
+			fRecEnergy2D->Fill(fY,fZ,fEloss);
 			// on succesfull, set nodata bit
 			if(nodata) nodata = false;
 			++fPointIter;
@@ -111,25 +110,21 @@
 	// FINALISE FUNCTION: writes everything and then releases memory
 	void TWriteSingle::Finalise(){
 		// Project to xy plane (ignore drift direction)
-		fRecPoints3Dyz = (TH2S*)fRecPoints3D->Project3D("zy");
-		fRecEnergy3Dyz = (TH2D*)fRecEnergy3D->Project3D("zy");
-		fRecPoint1D = (TH1S*)fRecPoints3D->Project3D("y");
-		fRecEnergy1D = (TH1D*)fRecEnergy3D->Project3D("y");
-		fRecEnergy3Dyz->Divide(fRecPoints3Dyz);
+		fRecPoints1D = (TH1S*)fRecPoints2D->ProjectionY();
+		fRecEnergy1D = (TH1D*)fRecEnergy2D->ProjectionY();
+		fRecEnergy2D->Divide(fRecPoints2D);
 		// Set drawing options
-		fRecPoints3Dyz->SetOption(pDrawHistoOption);
-		fRecEnergy3Dyz->SetOption(pDrawHistoOption);
+		fRecPoints1D->SetOption(pDrawHistoOption);
+		fRecEnergy1D->SetOption(pDrawHistoOption);
 		// Write histograms, graph, and tree
 		fTPC1pointsYZ ->Write();
-		fRecPoints3D  ->Write();
-		fRecPoints3Dyz->Write();
-		fRecEnergy3D  ->Write();
-		fRecEnergy3Dyz->Write();
 		fRecEnergy1D->Write();
-		fRecPoint1D->Write();
+		fRecPoints1D->Write();
+		fRecEnergy2D->Write();
+		fRecPoints2D->Write();
 		fTree         ->Write();
 		// Delete them
 		delete fTPC1pointsYZ; fTPC1pointsYZ = NULL;
-		delete fRecPoints3D;  fRecPoints3D  = NULL;
-		delete fRecEnergy3D;  fRecEnergy3D  = NULL;
+		delete fRecPoints2D;  fRecPoints2D  = NULL;
+		delete fRecEnergy2D;  fRecEnergy2D  = NULL;
 	}
