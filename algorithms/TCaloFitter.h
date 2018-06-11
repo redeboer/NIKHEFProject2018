@@ -6,8 +6,8 @@
 	Performs fits over the data points of a calo event. The fits are stored to the histogram of the calo event. Fit information is stored to a TTree.
 */
 
-#ifndef TCALOFITTER_T
-#define TCALOFITTER_T 1
+#ifndef TCALOFITTER_H
+#define TCALOFITTER_H 1
 
 // === INCLUDES =======
 	#include <fstream>
@@ -62,4 +62,4 @@ private:
 
 };
 
-#endif // TCALOFITTER_T
+#endif // TCALOFITTER_H

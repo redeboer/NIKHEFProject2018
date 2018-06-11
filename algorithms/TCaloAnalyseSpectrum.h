@@ -6,8 +6,8 @@
 	This class writes histograms the histograms of the TCaloEvents. This can result in a large output ROOT file!
 */
 
-#ifndef TCALOANALYSESPECTRUM_T
-#define TCALOANALYSESPECTRUM_T 1
+#ifndef TCALOANALYSESPECTRUM_H
+#define TCALOANALYSESPECTRUM_H 1
 
 // === INCLUDES =======
 	#include <fstream>
@@ -37,4 +37,4 @@ private:
 
 };
 
-#endif // TCALOANALYSESPECTRUM_T
+#endif // TCALOANALYSESPECTRUM_H

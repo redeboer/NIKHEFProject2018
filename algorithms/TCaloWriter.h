@@ -6,8 +6,8 @@
 	This class writes histograms the histograms of the TCaloEvents. This can result in a large output ROOT file!
 */
 
-#ifndef TCALOWRITER_T
-#define TCALOWRITER_T 1
+#ifndef TCALOWRITER_H
+#define TCALOWRITER_H 1
 
 // === INCLUDES =======
 	#include <fstream>
@@ -37,4 +37,4 @@ private:
 
 };
 
-#endif // TCALOWRITER_T
+#endif // TCALOWRITER_H
