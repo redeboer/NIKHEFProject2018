@@ -13,9 +13,11 @@
 
 // === INCLUDES =======
 	#include "TString.h"
+	#include "TPixelMask.h"
 	#include "TSystemDirectory.h"
 	#include <string>
 	#include <list>
+	#include "TTimepix.h"
 	#include "TAlgorithm.h"
 
 // === CLASS DEFINITION =======
@@ -25,9 +27,9 @@ public:
 	// Constructors and destructors
 	// no writing operation, so writing bit set to false
 	TTimepixLoader(TClipboard* cp)
-		: TAlgorithm(cp,"TTimepixLoader",false) {}
+		: TAlgorithm(cp,"TTimepixLoader",false), fPixelMask(NULL) {}
 	TTimepixLoader(TClipboard* cp, Bool_t debug)
-		: TAlgorithm(cp,"TTimepixLoader",false,debug) {}
+		: TAlgorithm(cp,"TTimepixLoader",false,debug), fPixelMask(NULL) {}
 	~TTimepixLoader() {}
 
 	// Algorithm step functions
@@ -44,7 +46,11 @@ private:
 	Bool_t ExtractZipFile(TString);
 	void AddFileName(TString);
 	Bool_t ReadDSC(const char*);
+	void AddPixel(UShort_t,UShort_t,UShort_t);
 	Bool_t LoadTimepix(const char*);
+	// Data member pointers
+	TTimepix* fTimepix;
+	TPixelMask* fPixelMask;
 	// Data members
 	Bool_t fHasDSC;
 	TString fCurrentDir;

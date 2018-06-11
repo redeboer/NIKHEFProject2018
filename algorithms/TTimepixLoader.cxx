@@ -17,7 +17,6 @@
 	#include <iostream>
 	#include <sstream>
 	#include "TPixel.h"
-	#include "TTimepix.h"
 	using namespace std;
 	using namespace NIKHEFProject;
 
@@ -71,6 +70,8 @@
 		} else { // return FINISHED if all files have been analysed
 			return Finished;
 		}
+		// Load pixel mask
+		if(!fPixelMask) fPixelMask = (TPixelMask*)fClipboard->Get("pixelmask");
 		// Attempt to create timepix from txt file
 		if(!LoadTimepix(filename.c_str())) return NoData;
 		// SUCCESS if entire procedure has been run
@@ -147,6 +148,16 @@
 		filestream.close();
 		return true;
 	}
+	// Function that adds pixel to the clipboard
+	void TTimepixLoader::AddPixel(UShort_t col, UShort_t row, UShort_t adc)
+	{
+		// Check if pixels falls in pixel mask
+		if(fPixelMask) if(fPixelMask->IsMasked(col,row)) return;
+		// Create pixel and at to clipboard
+		TPixel* pixel = new TPixel(col,row,adc);
+		fTimepix->AddPixel(pixel);
+		fClipboard->Put(pixel);
+	}
 	// Function that loads a timepix with hit pixels as read from a txt data file. If the input filename contains the TPC1 identifier (pTPC1id), at attempt is made to load the corresponding TPC2 data as well (identified by pTPC2id).
 	Bool_t TTimepixLoader::LoadTimepix(const char* filename)
 	{
@@ -158,7 +169,7 @@
 		// Initiate Timepix data
 		TString timepixname = GetFileName(filename);
 		RemoveExtension(timepixname);
-		TTimepix* timepix = new TTimepix(
+		fTimepix = new TTimepix(
 			timepixname.Data(), GetTimestamp(timepixname),
 			fNCols, fNRows, fMpxClock, fAcqTime, fStartTime );
 		// Open file stream
@@ -167,32 +178,24 @@
 		// Read lines
 		UShort_t row, col, adc;
 		if(pMatrixFormat) { // if in matrix format
-			for( row=0; row<timepix->GetNRows(); row++ ) {
-				for( col=0; col<timepix->GetNColumns(); col++ ) {
+			for( row=0; row<fTimepix->GetNRows(); row++ ) {
+				for( col=0; col<fTimepix->GetNColumns(); col++ ) {
 					filestream >> adc;
-					if(adc) {
-						TPixel* pixel = new TPixel(col,row,adc);
-						timepix->AddPixel(pixel);
-						fClipboard->Put(pixel);
-					}
+					if(adc) AddPixel(col,row,adc);
 				}
 			}
 		} else { // if in 3xN format
 			while(filestream.getline(pBuffer,pBufferSize)) {
 				istringstream sstream(pBuffer);
 				sstream >> row >> col >> adc;
-				if(adc) {
-					TPixel* pixel = new TPixel(col,row,adc);
-					timepix->AddPixel(pixel);
-					fClipboard->Put(pixel);
-				}
+				if(adc) AddPixel(col,row,adc);
 			}
 		}
 		// Put the timpix on the clipboard and close file stream
-		fClipboard->Put(timepix);
+		fClipboard->Put(fTimepix);
 		filestream.close();
 		// Warning message
-		if( !timepix->GetNHits() ) if(fDebug) cout << "  \"" << timepixname << "\" has no hits" << endl;
+		if( !fTimepix->GetNHits() ) if(fDebug) cout << "  \"" << timepixname << "\" has no hits" << endl;
 		// See if file defines TPC1. If so, attempt to load corresponding TPC2
 		timepixname = filename;
 		if(timepixname.Contains(pTPC1id)) {
