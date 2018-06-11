@@ -26,6 +26,8 @@ public:
 			: fRecPoint(x,y,z), fEnergyLoss(de), fTrack1(t1), fTrack2(t2) {}
 		TRecPoint(TTrack* t1, TTrack* t2, TVector3 vec, TVector3 altvec, Double_t de=0)
 			: fRecPoint(vec), fRecPointAlt(altvec), fEnergyLoss(de), fTrack1(t1), fTrack2(t2) {}
+		TRecPoint(TTrack* t1, TVector3 vec, Double_t de=0)
+			: fRecPoint(vec), fRecPointAlt(vec), fEnergyLoss(de), fTrack1(t1), fTrack2(nullptr){}
 		~TRecPoint() {}
 	// Getters
 		TVector3& GetPoint();
