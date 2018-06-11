@@ -26,6 +26,8 @@ namespace NIKHEFProject {
 	Double_t pDeltaR = 30; // cutout size for Hough transform
 	Double_t pPStep = 2;   // angle phi stepsize for Hough transform
 	Int_t pPSteps = 180/pPStep;        // do not change!
+	// Calorimeter information
+	const Double_t pEnergyConvFactor = 5.e-4; // determine this using TCaloAnalyseSpectrum
 	// Default timepix settings (will be used as minimum)
 	UShort_t pNCols = 256;
 	UShort_t pNRows = 256;

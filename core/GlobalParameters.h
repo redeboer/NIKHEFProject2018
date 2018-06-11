@@ -29,6 +29,8 @@ namespace NIKHEFProject {
 	extern Double_t pPStep;
 	extern Int_t pPSteps;
 	extern Int_t pRSteps;
+	// Calorimeter parameters
+	extern const Double_t pEnergyConvFactor; // determine this using TCaloAnalyseSpectrum
 	// Default timepix settings
 	extern UShort_t pNCols;
 	extern UShort_t pNRows;
