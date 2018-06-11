@@ -29,7 +29,9 @@
 	#include "TRecogniseTracks.h"
 	#include "TFitTracks.h"
 	#include "TIntersectTracks.h"
+	#include "TSingleTracks.h"
 	#include "TWriteReconstruction.h"
+	#include "TWriteSingle.h"
 	using namespace std;
 	using namespace NIKHEFProject;
 
@@ -60,8 +62,10 @@ Int_t main(Int_t argc, char *argv[]) {
 	if(pSimulationData) {
 		analysis->Add( new TSimulatedEventLoader(clipboard,false) );
 		// analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
-		analysis->Add( new TIntersectTracks(clipboard,false) );
-		analysis->Add( new TWriteReconstruction(clipboard,false) );
+		// analysis->Add( new TIntersectTracks(clipboard,false) );
+		analysis->Add( new TSingleTracks(clipboard,true) ); // Never run both Tracks and TracksSingle
+		// analysis->Add( new TWriteReconstruction(clipboard,false) );
+		analysis->Add( new TWriteSingle(clipboard,false) ); // Never run both single and reconstruction
 	} else {
 		//  analysis->Add( new TCaloLoader(clipboard,false) );
 		//  analysis->Add( new TCaloFitter(clipboard,false) );
