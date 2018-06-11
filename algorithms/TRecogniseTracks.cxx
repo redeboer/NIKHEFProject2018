@@ -1,4 +1,4 @@
-// Author: Remco de Boer
+// Authors: Remco de Boer and Maarten Hammer
 // Date: May 22nd, 2018
 // For NIKHEF Project 2018
 
