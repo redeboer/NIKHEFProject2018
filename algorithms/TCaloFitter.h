@@ -22,12 +22,13 @@ class TCaloFitter : public TAlgorithm {
 
 public:
 	// Constructors and destructors
-	// has writing operation, so writing bit set to true
+	// does not need writing operation, so writing bit set to true
+	// (output written to separate ROOT file)
 	TCaloFitter(TClipboard* cp)
-		: TAlgorithm(cp,"TCaloFitter",true),
+		: TAlgorithm(cp,"TCaloFitter",false),
 		fHist(NULL), fFitLSP(NULL), fLandau(NULL) {}
 	TCaloFitter(TClipboard* cp, Bool_t debug)
-		: TAlgorithm(cp,"TCaloFitter",true,debug),
+		: TAlgorithm(cp,"TCaloFitter",false,debug),
 		fHist(NULL), fFitLSP(NULL), fLandau(NULL) {}
 	~TCaloFitter() {}
 

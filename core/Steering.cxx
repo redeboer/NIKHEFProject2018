@@ -21,6 +21,7 @@
 	#include "TCaloLoader.h"
 	#include "TCaloFitter.h"
 	#include "TCaloWriter.h"
+	#include "TCaloAnalyseSpectrum.h"
 	#include "TTimepixLoader.h"
 	#include "TSimulatedCaloLoader.h"
 	#include "TSimulatedEventLoader.h"
@@ -60,16 +61,17 @@ Int_t main(Int_t argc, char *argv[]) {
 
 	/* -------------| ALGORITHMS |----------- */
 	if(pSimulationData) {
-		analysis->Add( new TSimulatedEventLoader(clipboard,false) );
+		// analysis->Add( new TSimulatedEventLoader(clipboard,false) );
 		// analysis->Add( new TSimulatedCaloLoader(clipboard,false) );
 		// analysis->Add( new TIntersectTracks(clipboard,false) );
-		analysis->Add( new TSingleTracks(clipboard,true) ); // Never run both Tracks and TracksSingle
+		// analysis->Add( new TSingleTracks(clipboard,true) ); // Never run both Tracks and TracksSingle
 		// analysis->Add( new TWriteReconstruction(clipboard,false) );
-		analysis->Add( new TWriteSingle(clipboard,false) ); // Never run both single and reconstruction
+		// analysis->Add( new TWriteSingle(clipboard,false) ); // Never run both single and reconstruction
 	} else {
-		//  analysis->Add( new TCaloLoader(clipboard,false) );
-		//  analysis->Add( new TCaloFitter(clipboard,false) );
-		//  analysis->Add( new TCaloWriter(clipboard,false) );
+		 analysis->Add( new TCaloLoader(clipboard,false) );
+		 analysis->Add( new TCaloFitter(clipboard,false) );
+		 analysis->Add( new TCaloWriter(clipboard,false) );
+		 analysis->Add( new TCaloAnalyseSpectrum(clipboard,false) );
 		//  analysis->Add( new TTimepixLoader(clipboard,true) );
 		//  analysis->Add( new TRecogniseTracks(clipboard,false) );
 		//  analysis->Add( new TWriteTimepixHist(clipboard,false) );

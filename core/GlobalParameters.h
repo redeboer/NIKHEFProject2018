@@ -14,6 +14,7 @@
 	#include <fstream>
 	#include <string>
 	#include <sstream>
+	#include "TFile.h"
 	#include "TString.h"
 	#include "TRegexp.h"
 	#include "TVector3.h"
@@ -31,6 +32,7 @@ namespace NIKHEFProject {
 	extern Int_t pRSteps;
 	// Calorimeter parameters
 	extern const Double_t pEnergyConvFactor; // determine this using TCaloAnalyseSpectrum
+	extern TFile* pCaloOutputFile;
 	// Default timepix settings
 	extern UShort_t pNCols;
 	extern UShort_t pNRows;
@@ -42,6 +44,7 @@ namespace NIKHEFProject {
 	extern TString pInput;
 	extern TString pOutput;        // determined from input file name
 	extern TString pCaloFileName;  // determined from input file name
+	extern TString pOutputCalo;    // determined from input file name
 	extern Bool_t pSimulationData; // determined from input file name
 	extern const Char_t* pSupportedZipExts[];
 	extern const UChar_t pNSupportedZipExts;
@@ -87,6 +90,7 @@ namespace NIKHEFProject {
 	extern ULong64_t GetTimestamp(std::string);
 	extern TString FormatInputString(const char*);
 	extern TString FormatOutputString(const char*);
+	extern TString FormatOutputCaloString(const char*);
 	extern TString FormatCaloFileString(const char*);
 	extern TString GetMotherPath(TString);
 	extern TString GetMotherPath(const char*);

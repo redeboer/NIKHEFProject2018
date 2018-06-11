@@ -16,8 +16,10 @@
 
 // === ALGORITHM STEP FUNCTIONS =======
 
-	// INITIALISE FUNCTION: creates TTree to store energies fitting parametesr
-	void TCaloFitter::Initialise() {
+	// INITIALISE FUNCTION: creates TTree to store energies fitting parameters and TFile to store the TTree
+	void TCaloFitter::Initialise()
+	{
+		// Create TTree
 		fTree = new TTree("calo_fits","fit results of calo events");
 		fTree->Branch("energy_sum",   &fEnergySum,   "energy_sum/D");
 		fTree->Branch("energy_lsp",   &fEnergyLSP,   "energy_lsp/D");
@@ -28,6 +30,8 @@
 		fTree->Branch("ndof_landau",  &fNDoF_Landau, "ndof_landau/I");
 		fTree->Branch("chi2norm_lsp",   &fChi2LSP_norm,   "chi2norm_lsp/D");
 		fTree->Branch("chi2norm_landau",&fChi2Landau_norm,"chi2norm_landau/D");
+		// Open TFile for calo analysis output
+		pCaloOutputFile = new TFile(pOutputCalo,"RECREATE");
 	}
 
 	// RUN FUNCTION: read the next calo event in the text file and create a TCaloEvent from it
@@ -113,10 +117,14 @@
 
 	// FINALISE FUNCTION: only writes TTree
 	void TCaloFitter::Finalise() {
+		// Write TTree
 		if(fTree) {
-			fTree->Write();
+			pCaloOutputFile->WriteObject(fTree,fTree->GetName());
 			delete fTree;
 		}
+		// Close output file
+		// pCaloOutputFile->Close();
+		// pCaloOutputFile = NULL;
 	}
 
 

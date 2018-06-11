@@ -25,9 +25,10 @@ namespace NIKHEFProject {
 	Int_t pRSteps = 200;   // resolution of Hough 2D r values
 	Double_t pDeltaR = 30; // cutout size for Hough transform
 	Double_t pPStep = 2;   // angle phi stepsize for Hough transform
-	Int_t pPSteps = 180/pPStep;        // do not change!
+	Int_t pPSteps = 180/pPStep; // do not change!
 	// Calorimeter information
-	const Double_t pEnergyConvFactor = 5.e-4; // determine this using TCaloAnalyseSpectrum
+	const Double_t pEnergyConvFactor = 5.0e-4; // determine this using TCaloAnalyseSpectrum
+	TFile* pCaloOutputFile = NULL;
 	// Default timepix settings (will be used as minimum)
 	UShort_t pNCols = 256;
 	UShort_t pNRows = 256;
@@ -39,8 +40,9 @@ namespace NIKHEFProject {
 	// (it is possibly to only provide an input file or directory name)
 	Bool_t pSimulationData = false;
 	TString pInput(FormatInputString("data"));
-	TString pOutput(FormatOutputString(pInput.Data())); // requires pInput to be set
 	TString pCaloFileName(FormatCaloFileString(pInput.Data())); // requires pInput to be set
+	TString pOutputCalo(FormatOutputCaloString(pInput.Data())); // requires pInput to be set
+	TString pOutput(FormatOutputString(pInput.Data())); // requires pInput to be set
 	const Char_t* pSupportedZipExts[] = {"tar","tar.gz","tgz","zip"};
 	const UChar_t pNSupportedZipExts = sizeof(pSupportedZipExts)/sizeof(*pSupportedZipExts);
 	// Structural names
@@ -155,7 +157,6 @@ namespace NIKHEFProject {
 	{
 		// Strip input string of path
 		TString str(GetFileName(name));
-		str.Remove( 0, str.First('/')+1 ); // remove path
 		str.Prepend("output/");
 		if( str.Contains(".txt") || str.Contains(".dat") ) {
 			// supported simulation file extensions
@@ -163,6 +164,16 @@ namespace NIKHEFProject {
 			str.Remove( str.Last('.'), str.Sizeof() );
 		}
 		str.Append(".root");
+		return str;
+	}
+	TString FormatOutputCaloString(const char* name)
+	{
+		// Strip input string of path
+		TString str(GetFileName(name));
+		str.Prepend("output/");
+		if( str.Contains(".txt") || str.Contains(".dat") )
+			str.Remove( str.Last('.'), str.Sizeof() );
+		str.Append("_calo.root");
 		return str;
 	}
 	// File that adds "_calo" into input file string (so only works for an input DIRECTORY)
@@ -243,6 +254,7 @@ namespace NIKHEFProject {
 				break;
 			case 'c':
 				pCaloFileName = optarg;
+				pOutputCalo = FormatOutputCaloString(optarg);
 				cout << "Calorimeter data file set to: \"" << pCaloFileName << "\"" << endl;
 				break;
 		}

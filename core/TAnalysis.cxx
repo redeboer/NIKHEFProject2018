@@ -75,7 +75,7 @@
 		fETAcount = 0;
 		fETA = 0;
 		Bool_t run = true; // set to zero when last algorithm returns "Finished"
-		while(run) {
+		while( run && pFileNumber<pTotalFiles ) {
 			// Event info: step info is printed within same line (no newlines)
 			cout << "\rRunning over event " << pFileNumber << "/" << pTotalFiles << flush;
 			if(fETAString!="") cout << " (ETA:" << fETAString << ")    " << flush;
