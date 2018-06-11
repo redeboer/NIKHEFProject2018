@@ -93,6 +93,15 @@
 			// Extract tracks
 			fTrack1 = (*fPointIter)->GetTrack1();
 			fTrack2 = (*fPointIter)->GetTrack2();
+			// Abort if one of the tracks is missing
+			if(!fTrack1) {
+				if(fDebug) cout << "Track 1 is missing!"<< endl;
+				return NoData;
+			}
+			if(!fTrack2) {
+				if(fDebug) cout << "Track 2 is missing!"<< endl;
+				return NoData;
+			}
 			// Get track 1 info
 			fTrack1->GetState();
 			TVector3 temp(fTrack1->GetState());
@@ -166,20 +175,20 @@
 		fRecEnergy3Dxz->SetOption(pDrawHistoOption);
 		fRecEnergy3Dyz->SetOption(pDrawHistoOption);
 		// Write histograms, graph, and tree
-		fTPC1pointsYZ ->Write();
-		fTPC2pointsYZ ->Write();
-		fRecPoints3D  ->Write();
-		fRecPoints3Dxy->Write();
-		fRecPoints3Dxz->Write();
-		fRecPoints3Dyz->Write();
-		fRecEnergy3D  ->Write();
-		fRecEnergy3Dxy->Write();
-		fRecEnergy3Dxz->Write();
-		fRecEnergy3Dyz->Write();
-		fRecAngles2D  ->Write();
-		fRecAngles    ->Write();
-		fGraph        ->Write();
-		fTree         ->Write();
+		fTPC1pointsYZ ->Write(0,TObject::kOverwrite);
+		fTPC2pointsYZ ->Write(0,TObject::kOverwrite);
+		fRecPoints3D  ->Write(0,TObject::kOverwrite);
+		fRecPoints3Dxy->Write(0,TObject::kOverwrite);
+		fRecPoints3Dxz->Write(0,TObject::kOverwrite);
+		fRecPoints3Dyz->Write(0,TObject::kOverwrite);
+		fRecEnergy3D  ->Write(0,TObject::kOverwrite);
+		fRecEnergy3Dxy->Write(0,TObject::kOverwrite);
+		fRecEnergy3Dxz->Write(0,TObject::kOverwrite);
+		fRecEnergy3Dyz->Write(0,TObject::kOverwrite);
+		fRecAngles2D  ->Write(0,TObject::kOverwrite);
+		fRecAngles    ->Write(0,TObject::kOverwrite);
+		fGraph        ->Write(0,TObject::kOverwrite);
+		fTree         ->Write(0,TObject::kOverwrite);
 		// Delete them
 		delete fTPC1pointsYZ; fTPC1pointsYZ = NULL;
 		delete fTPC2pointsYZ; fTPC2pointsYZ = NULL;
