@@ -1,7 +1,7 @@
 # Ignore folder contents
 bin/*
 output/*
-.vscode/*
+.vscode
 
 # Ignore binaries
 *.[oa]
