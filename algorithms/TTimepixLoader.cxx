@@ -269,7 +269,7 @@
 	void TTimepixLoader::AddFileName(TString name)
 	{
 		if( name.EndsWith(".txt") ) {
-			fInputFilenames.push_back(name.Data());
+			if(!name.Contains(pTPC2id)) fInputFilenames.push_back(name.Data());
 			if(fDebug) cout << "  Added file: \"" << name << "\"" << endl;
 		}
 	}
@@ -294,7 +294,9 @@
 			TString name = dir.GetName();
 			TSystemFile* entry = NULL;
 			while( entry=(TSystemFile*)next() ) {
+				// If directory: apply this same function (recursive behaviour)
 				if(entry->IsDirectory()) AddFileNames(entry->GetName());
+				// If file: extract if zip file and apply this same function (recursive behaviour), otherwise add file name to list
 				else if(!ExtractZipFile(entry->GetName())) AddFileName(fCurrentDir+entry->GetName());
 			}
 			gSystem->cd("..");
