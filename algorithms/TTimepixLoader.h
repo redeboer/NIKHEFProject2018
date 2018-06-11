@@ -44,8 +44,6 @@ private:
 	Bool_t ExtractZipFile(TString);
 	void AddFileName(TString);
 	Bool_t ReadDSC(const char*);
-	Bool_t DetermineFileFormat(const char*);
-	Bool_t IsMatrixFormat(const char*);
 	Bool_t LoadTimepix(const char*);
 	// Data members
 	Bool_t fMatrixFormat;

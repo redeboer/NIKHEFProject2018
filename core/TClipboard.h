@@ -23,6 +23,7 @@
 	#include "TBeamObject.h"
 	#include "TCaloEvent.h"
 	#include "TPixel.h"
+	#include "TPixelMask.h"
 	#include "TRecPoint.h"
 	#include "TTimepix.h"
 	#include "TTrack.h"
@@ -50,6 +51,7 @@ public:
 	// Specific put functions (MODIFY IF objs CLASSES CHANGE)
 		void Put(TCaloEvent*);
 		void Put(TPixel*);
+		void Put(TPixelMask*);
 		void Put(TRecPoint*);
 		void Put(TTrack*);
 		void Put(TTimepix*);
