@@ -32,6 +32,7 @@ namespace NIKHEFProject {
 	// Default timepix settings (will be used as minimum)
 	UShort_t pNCols = 256;
 	UShort_t pNRows = 256;
+	Bool_t pMatrixFormat = true;
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
 	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track)
@@ -84,6 +85,80 @@ namespace NIKHEFProject {
 			if(!file.is_open()) cout << "  File \"" << filename << "\" does not exist" << endl;
 			else cout << "  Opening file \"" << filename << "\"" << endl;
 		}
+	}
+	// Function that determines timepix size and file format of txt file
+	Bool_t IsMatrixFormat(const char* filename, Bool_t debug)
+	{
+		// Get first line and create string stream
+		ifstream filestream;
+		OpenFile(filestream,filename);
+		filestream.getline(pBuffer,pBufferSize);
+		istringstream sstream(pBuffer);
+		// Read first three values
+		UShort_t val;
+		sstream >> val >> val >> val;
+		// Is matrix format if 4th value exist
+		if(sstream >> val) pMatrixFormat = true;
+		else               pMatrixFormat = false;
+		// Close file stream and return
+		filestream.close();
+		if(debug) {
+			if(pMatrixFormat) cout << "  --> matrix format" << endl;
+			else              cout << "  --> 3xN format" << endl;
+		}
+		return pMatrixFormat;
+	}
+	// Function that determines timepix size and file format of txt file
+	Bool_t DetermineFileFormat(const char* filename, Bool_t debug)
+	{
+		if(debug) cout << "  Determining timepix file format of \"" << filename <<  "\"" << endl;
+		// Generate file stream
+		ifstream filestream;
+		OpenFile(filestream,filename); // debug can be added here if needed
+		// Some counters and read dumps
+		UInt_t nlines = 0;
+		UInt_t nvals  = 0;
+		Int_t val;
+		// Read lines
+		while( filestream.getline(pBuffer,pBufferSize) ) {
+			istringstream sstream(pBuffer); // create line stream from filestream
+			// get 1st two values in line and store if maximum
+			sstream >> val; if( val>pNCols ) pNCols = val;
+			sstream >> val; if( val>pNRows ) pNRows = val;
+			nvals+=2; // count number of values read
+			while(sstream >> val) ++nvals; // count remaining number of values
+			++nlines; // count number of lines
+		}
+		// Abort if empty
+		if(nvals==0) {
+			if(debug) cout << "  --> file is empty" << endl;
+			return false;
+		}
+		// Verify if text file is a rectangular block of values
+		if( nvals%nlines!=0 ) {
+			if(debug) cout << "  --> not a rectangular block of values." << endl;
+			return false;
+		}
+		// Set file and timepix dimensions and matrix format bit
+		nvals /= nlines;
+		if(nvals==3) { // maximum value if 3xN format (rounded to next pwer of 2)
+			pNCols = PowerOfTwo(pNCols);
+			pNRows = PowerOfTwo(pNRows);
+			pMatrixFormat = false;
+		} else { // just the matrix size if in matrix format
+			pNCols = nvals;
+			pNRows = nlines;
+			pMatrixFormat = true;
+		}
+		// Set global values
+		pNCols=pNCols, pNRows=pNRows;
+		// Close file stream and return
+		filestream.close();
+		if(debug) {
+			cout << "  --> file dimensions:    " << nvals << "x" << nlines << endl;
+			cout << "  --> timepix dimensions: " << pNCols << "x" << pNRows << endl;
+		}
+		return true;
 	}
 
 // === STRING FUNCTIONS =======

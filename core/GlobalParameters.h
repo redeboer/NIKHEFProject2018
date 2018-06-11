@@ -36,6 +36,7 @@ namespace NIKHEFProject {
 	// Default timepix settings
 	extern UShort_t pNCols;
 	extern UShort_t pNRows;
+	extern Bool_t pMatrixFormat;
 	// Fit parameters
 	extern UChar_t pMaxNFits;
 	extern UChar_t pMinClusterPixels;
@@ -84,6 +85,8 @@ namespace NIKHEFProject {
 
 // === FILE FUNCTIONS =======
 	extern void OpenFile(std::ifstream&,const char*,Bool_t debug=false);
+	extern Bool_t IsMatrixFormat(const char* filename, Bool_t debug=false);
+	extern Bool_t DetermineFileFormat(const char* filename, Bool_t debug=false);
 
 // === STRING FUNCTIONS =======
 	extern Bool_t SortFileNames(std::string,std::string);
