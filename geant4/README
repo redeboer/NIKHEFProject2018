@@ -1,0 +1,40 @@
+##Geant4
+
+Geant4 is a MC simulation programme made by CERN. To install Geant4, use the Geant4 install script or look at the installation guide in the nikhefproject final report.
+
+To compile the scripts one has to first run the following in the terminal:
+source <Place of your Geant4 installation>/share/Geant4-10.4.1/geant4make/geant4make.sh
+(or add this to your bash for convenience)
+
+## Acknowledgements
+
+Without the help of Panos Tsopelas in giving his Geant4 simulation in the beginning or our project, our progress could have never been this far.
+
+## Description of class structure
+
+The folder 'include' has all the .hh files and the 'src' folder has all the .cc files
+These files are connected with each other in pbm.cc
+The 'ROOT' folder holds all the simulation output data and ROOT scripts to analyse this data
+
+## Usage
+
+Compiling everything is done easily using `gmake`, which simply follows the `GNUmakefile` script and compiles pbm.cc. You can then run the executable with or without options, like:
+
+- `pbm` 
+This runs pbm.cc and opens the Qt environment with vis.mac and let's you see the components and the tracks
+
+- `pbm run.mac > <Output file you want to put the data in>`
+This runs run.mac and puts the output of the simulation into the sepcified output file.
+This output file can then be read by a ROOT script to analyse the data.
+
+In the Qt environment you can also adjust settings like:
+- /gun/energy 150 MeV
+  This sets the gun energy to 150 MeV.
+- /gun/particle mu-
+  This sets the particle type of the gun to a muon.
+
+To run the simulation one has to type:
+/run/beamOn <number of events>
+
+ 	  
+ 	
