@@ -70,7 +70,7 @@ rm -rf geant
 chown -R $(whoami):$(id -g -n $(whoami)) /usr/local/share/
 
 # # Set environment variables
-cp /usr/local/bin/geant4.sh /etc/profile.d/
+# cp /usr/local/bin/geant4.sh /etc/profile.d/
 echo "
 # Geant4
 source /usr/local/bin/geant4.sh" >> ~/.bashrc
