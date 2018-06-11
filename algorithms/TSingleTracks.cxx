@@ -69,7 +69,7 @@ Bool_t TSingleTracks::Reconstruct() {
 	// Some handy variables
 	fP1 = fTrack1->GetState();
 	fD1 = fTrack1->GetDirection();
-	// Find middle of the two neares points
+	// Find middle of the two nearest points
 	fRecPoint  = fP1;
 
 	return true;

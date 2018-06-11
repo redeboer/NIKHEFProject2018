@@ -1,5 +1,5 @@
-// Author: Remco de Boer
-// Date: May 27th, 2018
+// Author: Maarten Hammer
+// Date: June 11th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -50,12 +50,13 @@ private:
 	Double_t fPy1,fPz1,fVy1,fVz1;
 	Double_t fX, fY, fZ, fEloss;
 	// Graph and histograms
+	TH1S* fRecPoint1D;
+	TH1D* fRecEnergy1D;
 	TH2I* fTPC1pointsYZ; // histogram of fState
 	TH3S* fRecPoints3D;
 	TH2S* fRecPoints3Dyz;
 	TH3D* fRecEnergy3D;
 	TH2D* fRecEnergy3Dyz;
-	TGraph2D* fGraph;
 
 };
 

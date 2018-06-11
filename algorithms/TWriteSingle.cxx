@@ -1,5 +1,5 @@
-// Author: Remco de Boer
-// Date: May 27th, 2018
+// Author: Maarten Hammer
+// Date: June 11th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
@@ -49,9 +49,7 @@
 			pResolution, pXmin, pXmax,   // x bins (beam direction)
 			pResolution, pYmin, pYmax,   // y bins (transverse direction)
 			pResolution, pZmin, pZmax ); // z bins (drift direction)
-		if(pTotalFiles>0) fGraph = new TGraph2D(pTotalFiles);
-		else              fGraph = new TGraph2D();
-		fGraph->SetNameTitle("RecPoints","Reconstructed points;x (beam dir);y (transverse);z (drift dir)");
+
 		// Set drawing options
 		fTPC1pointsYZ->SetOption(pDrawHistoOption);
 		fRecPoints3D ->SetOption(pDrawHistoOption);
@@ -95,7 +93,6 @@
 			fTPC1pointsYZ->Fill(fPy1,fPz1);
 			fRecPoints3D->Fill(fX,fY,fZ);
 			fRecEnergy3D->Fill(fX,fY,fZ,fEloss);
-			fGraph->SetPoint(pEventNumber,fX,fY,fZ);
 			// on succesfull, set nodata bit
 			if(nodata) nodata = false;
 			++fPointIter;
@@ -116,6 +113,8 @@
 		// Project to xy plane (ignore drift direction)
 		fRecPoints3Dyz = (TH2S*)fRecPoints3D->Project3D("zy");
 		fRecEnergy3Dyz = (TH2D*)fRecEnergy3D->Project3D("zy");
+		fRecPoint1D = (TH1S*)fRecPoints3D->Project3D("y");
+		fRecEnergy1D = (TH1D*)fRecEnergy3D->Project3D("y");
 		fRecEnergy3Dyz->Divide(fRecPoints3Dyz);
 		// Set drawing options
 		fRecPoints3Dyz->SetOption(pDrawHistoOption);
@@ -126,11 +125,11 @@
 		fRecPoints3Dyz->Write();
 		fRecEnergy3D  ->Write();
 		fRecEnergy3Dyz->Write();
-		fGraph        ->Write();
+		fRecEnergy1D->Write();
+		fRecPoint1D->Write();
 		fTree         ->Write();
 		// Delete them
 		delete fTPC1pointsYZ; fTPC1pointsYZ = NULL;
 		delete fRecPoints3D;  fRecPoints3D  = NULL;
 		delete fRecEnergy3D;  fRecEnergy3D  = NULL;
-		delete fGraph;        fGraph        = NULL;
 	}
