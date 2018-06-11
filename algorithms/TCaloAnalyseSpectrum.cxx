@@ -30,7 +30,8 @@
 	void TCaloAnalyseSpectrum::Finalise()
 	{
 		// Get access to output file
-		if(!pCaloOutputFile) pCaloOutputFile = new TFile(pOutputCalo,"UPDATE");
+		if(pCaloOutputFile && pCaloOutputFile->IsOpen()) pCaloOutputFile->Close();
+		pCaloOutputFile = new TFile(pOutputCalo,"UPDATE");
 		// Attempt to load TTree
 		TTree* tree = (TTree*)pCaloOutputFile->Get("calo_fits");
 		if(!tree) {

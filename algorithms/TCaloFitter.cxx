@@ -123,8 +123,8 @@
 			delete fTree;
 		}
 		// Close output file
-		// pCaloOutputFile->Close();
-		// pCaloOutputFile = NULL;
+		pCaloOutputFile->Close();
+		pCaloOutputFile = NULL;
 	}
 
 

@@ -6,8 +6,8 @@
 	This class describes all information of a pixel in a timepix.
 */
 
-#ifndef PIXEL_H
-#define PIXEL_H 1
+#ifndef TPIXEL_H
+#define TPIXEL_H 1
 
 // === INCLUDE =======
 	#include <list>
@@ -40,4 +40,4 @@ private:
 	typedef std::list<TPixel*> TPixelList_t;
 	typedef std::list<TPixel*>::iterator TPixelIter_t;
 
-#endif // PIXEL_H
+#endif // TPIXEL_H

@@ -43,6 +43,7 @@ namespace NIKHEFProject {
 	TString pCaloFileName(FormatCaloFileString(pInput.Data())); // requires pInput to be set
 	TString pOutputCalo(FormatOutputCaloString(pInput.Data())); // requires pInput to be set
 	TString pOutput(FormatOutputString(pInput.Data())); // requires pInput to be set
+	TString pMaskFileName(FormatMaskFileString(pInput.Data())); // requires pInput to be set
 	const Char_t* pSupportedZipExts[] = {"tar","tar.gz","tgz","zip"};
 	const UChar_t pNSupportedZipExts = sizeof(pSupportedZipExts)/sizeof(*pSupportedZipExts);
 	// Structural names
@@ -176,8 +177,15 @@ namespace NIKHEFProject {
 		str.Append("_calo.root");
 		return str;
 	}
-	// File that adds "_calo" into input file string (so only works for an input DIRECTORY)
+	// File that adds "_calo.txt" into input file string (so only works for an input DIRECTORY)
 	TString FormatCaloFileString(const char* name)
+	{
+		TString str(name);
+		str += "_calo.txt";
+		return str;
+	}
+	// File that adds "_mask.txt" into input file string (so only works for an input DIRECTORY)
+	TString FormatMaskFileString(const char* name)
 	{
 		TString str(name);
 		str += "_calo.txt";
@@ -256,6 +264,10 @@ namespace NIKHEFProject {
 				pCaloFileName = optarg;
 				pOutputCalo = FormatOutputCaloString(optarg);
 				cout << "Calorimeter data file set to: \"" << pCaloFileName << "\"" << endl;
+				break;
+			case 'm':
+				pMaskFileName = optarg;
+				cout << "Mask filename set to: \"" << pMaskFileName << "\"" << endl;
 				break;
 		}
 	}

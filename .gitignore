@@ -1,6 +1,7 @@
 # Ignore folder contents
 bin/*
 output/*
+.archive
 .vscode
 
 # Ignore binaries

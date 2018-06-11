@@ -45,6 +45,7 @@ namespace NIKHEFProject {
 	extern TString pOutput;        // determined from input file name
 	extern TString pCaloFileName;  // determined from input file name
 	extern TString pOutputCalo;    // determined from input file name
+	extern TString pMaskFileName;  // determined from input file name
 	extern Bool_t pSimulationData; // determined from input file name
 	extern const Char_t* pSupportedZipExts[];
 	extern const UChar_t pNSupportedZipExts;
@@ -92,6 +93,7 @@ namespace NIKHEFProject {
 	extern TString FormatOutputString(const char*);
 	extern TString FormatOutputCaloString(const char*);
 	extern TString FormatCaloFileString(const char*);
+	extern TString FormatMaskFileString(const char*);
 	extern TString GetMotherPath(TString);
 	extern TString GetMotherPath(const char*);
 	extern TString GetFileName(TString);
