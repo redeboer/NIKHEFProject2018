@@ -330,6 +330,7 @@ namespace NIKHEFProject {
 				if(pSimulationData) cout<<"Reading simulation from: "<<pInput<<endl;
 				else cout<<"Reading measurement data from: "<<pInput<<endl;
 				// Set dependent file names
+				pCaloFileName = FormatCaloFileString(pInput.Data());
 				pOutput = FormatOutputString(pInput.Data());
 				pOutputCalo = FormatOutputCaloString(pInput.Data());
 				pMaskFileName = FormatMaskFileString(pInput.Data());
