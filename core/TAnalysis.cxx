@@ -49,7 +49,7 @@
 			if((*it)->CanWrite()) {
 				(*it)->SetDirectory(fClipboard->GetOutputFile()->mkdir((*it)->GetName().c_str()));
 			}
-			cout<<"["<<(*it)->GetName()<<"] Initialising"<<endl;
+			cout << "[" << (*it)->GetName() << "] Initialising..." << endl;
 			// Initialise the algorithm
 			(*it)->Initialise();
 			++it;
@@ -75,7 +75,7 @@
 		fETAcount = 0;
 		fETA = 0;
 		Bool_t run = true; // set to zero when last algorithm returns "Finished"
-		while( run && pFileNumber<pTotalFiles ) {
+		while( run /* && pFileNumber<pTotalFiles */ ) {
 			// Event info: step info is printed within same line (no newlines)
 			cout << "\rRunning over event " << pFileNumber << "/" << pTotalFiles << flush;
 			if(fETAString!="") cout << " (ETA:" << fETAString << ")    " << flush;

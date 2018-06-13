@@ -5,7 +5,7 @@
 
 /* === CLASS DESCRIPTION =======
 	An event loader is necessary for any analysis sequence. This event loader loads data from each detector in each event and places that data on the clipboard for further analysis.
-	(For now, this means it only reads data files from timepix detectors.)
+	Note that the convention for coordinates is (row,column), as in a matrix, and for the dimension it is (nrows,ncols) = (height,width).
 */
 
 #ifndef TTIMEPIXLOADER_H
@@ -59,8 +59,6 @@ private:
 	std::list<std::string>::iterator fFileIterator;
 	// Read dump
 	std::string fDummy;
-	UShort_t fNCols; // "width" of timepix
-	UShort_t fNRows; // "height" of timepix
 	Double_t fMpxClock; // medipix clock frequency [MHz]
 	Double_t fAcqTime;  // acquisition time [s]
 	Double_t fStartTime; // recorded start time [s?]

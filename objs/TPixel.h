@@ -22,10 +22,15 @@ public:
 	~TPixel();
 	TPixel(UShort_t,UShort_t,UShort_t);
 	// Getters
-	UShort_t GetColumn() const;
 	UShort_t GetRow() const;
+	UShort_t GetColumn() const;
 	UShort_t GetADC() const;
 	void Get(UShort_t&,UShort_t&,UShort_t&) const;
+	// Setters
+	void SetRow(UShort_t&);
+	void SetColumn(UShort_t&);
+	void SetADC(UShort_t&);
+	void Set(UShort_t&,UShort_t&,UShort_t&);
 	// Information
 	void Print();
 

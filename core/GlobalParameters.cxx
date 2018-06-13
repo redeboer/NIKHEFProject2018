@@ -30,8 +30,8 @@ namespace NIKHEFProject {
 	const Double_t pEnergyConvFactor = 5.0e-4; // determine this using TCaloAnalyseSpectrum
 	TFile* pCaloOutputFile = NULL;
 	// Default timepix settings (will be used as minimum)
-	UShort_t pNCols = 256;
 	UShort_t pNRows = 256;
+	UShort_t pNCols = 256;
 	Bool_t pMatrixFormat = true;
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
@@ -123,8 +123,8 @@ namespace NIKHEFProject {
 		while( filestream.getline(pBuffer,pBufferSize) ) {
 			istringstream sstream(pBuffer); // create line stream from filestream
 			// get 1st two values in line and store if maximum
-			sstream >> val; if( val>pNCols ) pNCols = val;
 			sstream >> val; if( val>pNRows ) pNRows = val;
+			sstream >> val; if( val>pNCols ) pNCols = val;
 			nvals+=2; // count number of values read
 			while(sstream >> val) ++nvals; // count remaining number of values
 			++nlines; // count number of lines
@@ -142,21 +142,19 @@ namespace NIKHEFProject {
 		// Set file and timepix dimensions and matrix format bit
 		nvals /= nlines;
 		if(nvals==3) { // maximum value if 3xN format (rounded to next pwer of 2)
-			pNCols = PowerOfTwo(pNCols);
 			pNRows = PowerOfTwo(pNRows);
+			pNCols = PowerOfTwo(pNCols);
 			pMatrixFormat = false;
 		} else { // just the matrix size if in matrix format
-			pNCols = nvals;
 			pNRows = nlines;
+			pNCols = nvals;
 			pMatrixFormat = true;
 		}
-		// Set global values
-		pNCols=pNCols, pNRows=pNRows;
 		// Close file stream and return
 		filestream.close();
 		if(debug) {
-			cout << "  --> file dimensions:    " << nvals << "x" << nlines << endl;
-			cout << "  --> timepix dimensions: " << pNCols << "x" << pNRows << endl;
+			cout << "  --> file dimensions:    " << nlines << " lines x " << nlines << " columns" << endl;
+			cout << "  --> timepix dimensions: height " << pNRows << " x width " << pNCols << endl;
 		}
 		return true;
 	}
@@ -330,6 +328,7 @@ namespace NIKHEFProject {
 				if(pSimulationData) cout<<"Reading simulation from: "<<pInput<<endl;
 				else cout<<"Reading measurement data from: "<<pInput<<endl;
 				// Set dependent file names
+				pCaloFileName = FormatCaloFileString(pInput.Data());
 				pOutput = FormatOutputString(pInput.Data());
 				pOutputCalo = FormatOutputCaloString(pInput.Data());
 				pMaskFileName = FormatMaskFileString(pInput.Data());

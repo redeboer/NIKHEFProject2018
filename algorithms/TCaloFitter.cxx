@@ -39,12 +39,12 @@
 	{
 		// Get calo event from clipboard
 		fCaloEventList = (TCaloEventList_t*)fClipboard->Get("caloevents");
-		fCaloEventIter = fCaloEventList->begin();
-		if( fCaloEventIter == fCaloEventList->end() ) {
+		if( !fCaloEventList ) {
 			if(fDebug) cout << endl << "Calofitter: No calodata in event " << pEventNumber << endl;
 			return NoData;
 		}
 		// Run over calo events in clipboard
+		fCaloEventIter = fCaloEventList->begin();
 		while( fCaloEventIter != fCaloEventList->end()) {
 			// Get histogram and sum energy
 			fHist = (*fCaloEventIter)->GetHistogram();

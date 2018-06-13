@@ -16,17 +16,21 @@
 
 // === INFORMATION =======
 	vector<vector<bool> >& TPixelMask::GetMask() { return fMaskedPixels; }
-	Bool_t TPixelMask::IsMasked( UShort_t col, UShort_t row ) const
+	Bool_t TPixelMask::IsMasked( UShort_t row, UShort_t col ) const
 	{
-		return fMaskedPixels[col][row];
+		if( row<fMaskedPixels.size() ) if( col<fMaskedPixels[row].size() )
+			return fMaskedPixels[row][col];
+		else return false;
 	}
 	void TPixelMask::MaskPixel(UShort_t col, UShort_t row)
 	{
-		fMaskedPixels[col][row] == true;
+		if( row<fMaskedPixels.size() ) if( col<fMaskedPixels[row].size() )
+			fMaskedPixels[row][col] == true;
 	}
 	void TPixelMask::UnmaskPixel(UShort_t col, UShort_t row)
 	{
-		fMaskedPixels[col][row] == false;
+		if( row<fMaskedPixels.size() ) if( col<fMaskedPixels[row].size() )
+			fMaskedPixels[row][col] == false;
 	}
 	void TPixelMask::Print()
 	{

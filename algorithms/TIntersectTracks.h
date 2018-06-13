@@ -22,7 +22,7 @@ class TIntersectTracks : public TAlgorithm {
 
 public:
 	// Constructors and destructors
-	// set writing bit to true if you want to see 2D Hough transforms
+	// has no writing operation
 	TIntersectTracks(TClipboard* cp)
 		: TAlgorithm(cp,"TIntersectTracks",false) {}
 	TIntersectTracks(TClipboard* cp, Bool_t debug)

@@ -71,7 +71,7 @@
 		Int_t i=0;
 		TPixelIter_t it = timepix->GetPixels()->begin();
 		while( it!=timepix->GetPixels()->end() ) {
-			fGraph->SetPoint( i, (*it)->GetColumn(), (*it)->GetRow(), (*it)->GetADC() );
+			fGraph->SetPoint( i, (*it)->GetRow(), (*it)->GetColumn(), (*it)->GetADC() );
 			++it;
 			++i;
 		} }

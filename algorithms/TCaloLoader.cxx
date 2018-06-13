@@ -20,9 +20,9 @@
 		// Open file stream and check if open
 		fFileStream.open(pCaloFileName);
 		if(!fFileStream.is_open()) {
-			if(fDebug) cout << "File \"" << pCaloFileName << "\" does not exist!" << endl;
+			cout << "  File \"" << pCaloFileName << "\" does not exist!" << endl;
 			return;
-		}
+		} else cout << "  Opened calo file \"" << pCaloFileName << "\"" << endl;
 		// Determine number of events
 		DetermineNEvents();
 	}
