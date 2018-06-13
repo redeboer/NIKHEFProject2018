@@ -3,6 +3,7 @@ bin/*
 output/*
 .archive
 .vscode
+.fuse_hidden*
 
 # Ignore binaries
 *.[oa]
