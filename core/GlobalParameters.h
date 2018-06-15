@@ -34,9 +34,11 @@ namespace NIKHEFProject {
 	extern const Double_t pEnergyConvFactor; // determine this using TCaloAnalyseSpectrum
 	extern TFile* pCaloOutputFile;
 	// Default timepix settings
-	extern UShort_t pNCols;
 	extern UShort_t pNRows;
+	extern UShort_t pNCols;
 	extern Bool_t pMatrixFormat;
+	extern UInt_t pMinNHits;
+	extern UInt_t pMaxNHits;
 	// Fit parameters
 	extern UChar_t pMaxNFits;
 	extern UChar_t pMinClusterPixels;

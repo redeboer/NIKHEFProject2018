@@ -1,9 +1,10 @@
 // Author: Remco de Boer
-// Date: May 22nd, 2018
+// Date: June 13th, 2018
 // For NIKHEF Project 2018
 
 /* === CLASS DESCRIPTION =======
 	This algorithm creates track objects for all clusters available in the clipboard. This is done through applying a linear fit (TLinearFitter) on the pixel data points associated to each cluster. See TTrack for how this information is stored.
+	All fit parameters are stored to a TTree.
 */
 
 // === INCLUDES =======
@@ -11,11 +12,28 @@
 	#include <iostream>
 	#include "TTrack.h"
 	using namespace std;
+	using namespace NIKHEFProject;
 
 // === ALGORITHM STEP FUNCTIONS =======
 
-	// INITIALISE FUNCTION: nothing to initialise in this algorithm
-	void TFitTracks::Initialise() {}
+	// INITIALISE FUNCTION: makes a ttree
+	void TFitTracks::Initialise() {
+		// Create tree
+		fTree = new TTree("fits_tracks","Fit parameters of tracks");
+		// Set branches
+		fTree->Branch("XYpar0",&fXYp0, "XYpar0/D");
+		fTree->Branch("XYpar1",&fXYp1, "XYpar1/D");
+		fTree->Branch("XYerr0",&fXYe0, "XYerr0/D");
+		fTree->Branch("XYerr1",&fXYe1, "XYerr1/D");
+		fTree->Branch("XYchi2",&fXYchi,"XYchi2/D");
+		fTree->Branch("XYndof",&fXYndf,"XYndof/D");
+		fTree->Branch("XZpar0",&fXZp0, "XZpar0/D");
+		fTree->Branch("XZpar1",&fXZp1, "XZpar1/D");
+		fTree->Branch("XZerr0",&fXZe0, "XZerr0/D");
+		fTree->Branch("XZerr1",&fXZe1, "XZerr1/D");
+		fTree->Branch("XZchi2",&fXZchi,"XZchi2/D");
+		fTree->Branch("XZndof",&fXZndf,"XZndof/D");
+	}
 
 	// RUN FUNCTION: in each event, load one frame of data from all devices
 	StatusCode TFitTracks::Run()
@@ -34,6 +52,8 @@
 			fClusterIter = fClusterList->begin();
 			while( fClusterIter!=fClusterList->end() ) {
 				nfits += FitTrack(*fClusterIter);
+				MakeHistogramFit(*fClusterIter);
+				fHistogram->Write();
 				++fClusterIter;
 			}
 			// Check if there was at least one track fit for each timepix
@@ -51,8 +71,10 @@
 		return Success;
 	}
 
-	// FINALISE FUNCTION: nothing to finalise here
-	void TFitTracks::Finalise() {}
+	// FINALISE FUNCTION: store TTree
+	void TFitTracks::Finalise() {
+		fTree->Write();
+	}
 
 // === PRIVATE FUNCTIONS =======
 	Bool_t TFitTracks::FitTrack(TTimepix* cluster)
@@ -69,7 +91,7 @@
 		while( it!=cluster->GetPixels()->end() ) {
 			// Add it to the fitter
 			x[0] = (*it)->GetColumn();
-			fFitterXY->AddPoint(x,(*it)->GetRow()/*, <implement errors here>*/);
+			fFitterXY->AddPoint(x,(*it)->GetColumn()/*, <implement errors here>*/);
 			fFitterXZ->AddPoint(x,(*it)->GetADC()/*, <implement errors here>*/);
 			++it;
 		}
@@ -79,22 +101,45 @@
 		fFitterXY->Eval();
 		fFitterXZ->Eval();
 
+		// Store fit parameters
+		fXYp0  = fFitterXY->GetParameter(0);
+		fXYp1  = fFitterXY->GetParameter(1);
+		fXYe0  = fFitterXY->GetParError(0);
+		fXYe1  = fFitterXY->GetParError(1);
+		fXYchi = fFitterXY->GetChisquare();
+		fXYndf = fFitterXY->GetNpoints()-fFitterXY->GetNumberFreeParameters();
+		fXZp0  = fFitterXZ->GetParameter(0);
+		fXZp1  = fFitterXZ->GetParameter(1);
+		fXZe0  = fFitterXZ->GetParError(0);
+		fXZe1  = fFitterXZ->GetParError(1);
+		fXZchi = fFitterXZ->GetChisquare();
+		fXYndf = fFitterXZ->GetNpoints()-fFitterXZ->GetNumberFreeParameters();
+		fTree->Fill();
+
 		// Set the track state and direction and their errors
-		fTrack->SetState( 0.,
-			fFitterXY->GetParameter(0),
-			fFitterXZ->GetParameter(0) );
-		fTrack->SetDirection( 1.,
-			fFitterXY->GetParameter(1),
-			fFitterXZ->GetParameter(1) );
-		fTrack->SetStateError( 0.,
-			fFitterXY->GetParError(0),
-			fFitterXZ->GetParError(0) );
-		fTrack->SetDirectionError( 0.,
-			fFitterXY->GetParError(1),
-			fFitterXZ->GetParError(1) );
+		fTrack->SetState( 0., fXYp0, fXZp0 );
+		fTrack->SetDirection( 1., fXYp1, fXZp1 );
+		fTrack->SetStateError( 0., fXYe0, fXZe0 );
+		fTrack->SetDirectionError( 0., fXYe1, fXZe1 );
 
 		// Store track object on clipboard
 		fClipboard->Put(fTrack);
 		if(fDebug) fTrack->Print();
 		return true;
+	}
+	// Function that is adopted from TWriteTimepixHist, but now adds a fit
+	void TFitTracks::MakeHistogramFit(TTimepix* timepix)
+	{
+		// Generate appropriate name and title
+		TString name(timepix->GetName());
+		// Create histogram of correct number of pixels
+		fHistogram = new TH2D( name.Data(), name.Data(), timepix->GetNColumns(), 0, timepix->GetNColumns(), timepix->GetNRows(), 0, timepix->GetNRows() );
+		fHistogram->SetOption(pDrawHistoOption);
+		// Fill bins by looping over pixels in timepix
+		TPixelIter_t it = timepix->GetPixels()->begin();
+		while( it!=timepix->GetPixels()->end() ) {
+			fHistogram->SetBinContent( (*it)->GetColumn(), (*it)->GetRow(), (*it)->GetADC() );
+			++it;
+		}
+		// Add tracks
 	}

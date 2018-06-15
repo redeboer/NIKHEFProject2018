@@ -18,11 +18,11 @@ class TPixelMask : public TBeamObject {
 
 public:
 	// Constructors and destructors
-	TPixelMask(UShort_t ncols,UShort_t nrows)
-		: fMaskedPixels(ncols,std::vector<bool>(nrows)) {}
+	TPixelMask(UShort_t nrows, UShort_t ncols)
+		: fMaskedPixels(nrows,std::vector<bool>(ncols)) {}
 	~TPixelMask();
 	// Functions
-	std::vector<std::vector<bool> >& GetMask();
+	std::vector<std::vector<bool> >& GetMask(); // nrow x ncol matrix
 	Bool_t IsMasked(UShort_t,UShort_t) const;
 	void MaskPixel(UShort_t,UShort_t);
 	void UnmaskPixel(UShort_t,UShort_t);

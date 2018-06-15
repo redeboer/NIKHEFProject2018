@@ -5,7 +5,7 @@
 
 /* === CLASS DESCRIPTION =======
 	An event loader is necessary for any analysis sequence. This event loader loads data from each detector in each event and places that data on the clipboard for further analysis.
-	(For now, this means it only reads data files from timepix detectors.)
+	Note that the convention for coordinates is (row,column), as in a matrix, and for the dimension it is (nrows,ncols) = (height,width).
 */
 
 // === INCLUDES =======
@@ -71,7 +71,7 @@
 			return Finished;
 		}
 		// Load pixel mask
-		if(!fPixelMask) fPixelMask = (TPixelMask*)fClipboard->Get("pixelmask");
+		if(!fPixelMask) fPixelMask = (TPixelMask*)fClipboard->GetFirst("pixelmask");
 		// Attempt to create timepix from txt file
 		if(!LoadTimepix(filename.c_str())) return NoData;
 		// SUCCESS if entire procedure has been run
@@ -91,8 +91,9 @@
 // === PRINT FUNCTIONS =======
 	void TTimepixLoader::PrintFileNames() {
 		fFileIterator = fInputFilenames.begin();
+		cout << "LIST OF FILE NAMES IN TIMEPIX LOADER:" << endl;
 		while( fFileIterator!=fInputFilenames.end() ) {
-			cout << GetFileName(*fFileIterator) << endl;
+			cout << "  " << GetFileName(*fFileIterator) << endl;
 			++fFileIterator;
 		}
 		cout << fInputFilenames.size() << " FILES IN TOTAL" << endl;
@@ -115,10 +116,10 @@
 			if( tData.Contains(" width=") && tData.Contains(" height=") ) {
 				TString line(pBuffer);
 				stringstream str1( line.Remove(0,line.Index(" width=")+7).Data() );
-				str1 >> fNCols;
+				str1 >> pNCols;
 				stringstream str2( line.Remove(0,line.Index(" height=")+8).Data() );
-				str2 >> fNRows;
-				if(fDebug) cout << "  --> dimensions: " << fNCols << "x" << fNRows << endl;
+				str2 >> pNRows;
+				if(fDebug) cout << "  --> dimensions: height " << pNRows << " x width " << pNCols << endl;
 			}
 			// Get clock frequency [MHz]
 			else if(tData.Contains("\"Mpx clock\"")) {
@@ -149,12 +150,12 @@
 		return true;
 	}
 	// Function that adds pixel to the clipboard
-	void TTimepixLoader::AddPixel(UShort_t col, UShort_t row, UShort_t adc)
+	void TTimepixLoader::AddPixel(UShort_t row, UShort_t col, UShort_t adc)
 	{
 		// Check if pixels falls in pixel mask
-		if(fPixelMask) if(fPixelMask->IsMasked(col,row)) return;
+		if(fPixelMask) if(fPixelMask->IsMasked(row,col)) return;
 		// Create pixel and at to clipboard
-		TPixel* pixel = new TPixel(col,row,adc);
+		TPixel* pixel = new TPixel(row,col,adc);
 		fTimepix->AddPixel(pixel);
 		fClipboard->Put(pixel);
 	}
@@ -163,15 +164,15 @@
 	{
 		// Attempt to open dsc file
 		// if dsc file exists, determine format from first line only
-		if( ReadDSC(filename) ) IsMatrixFormat(filename);
+		if( ReadDSC(filename) ) IsMatrixFormat(filename,fDebug);
 		// if no dsc file exists, determine format with full method
-		else if(!DetermineFileFormat(filename)) return false;
+		else if(!DetermineFileFormat(filename,fDebug)) return false;
 		// Initiate Timepix data
 		TString timepixname = GetFileName(filename);
 		RemoveExtension(timepixname);
 		fTimepix = new TTimepix(
 			timepixname.Data(), GetTimestamp(timepixname),
-			fNCols, fNRows, fMpxClock, fAcqTime, fStartTime );
+			pNRows, pNCols, fMpxClock, fAcqTime, fStartTime );
 		// Open file stream
 		ifstream filestream;
 		OpenFile(filestream,filename);
@@ -181,21 +182,36 @@
 			for( row=0; row<fTimepix->GetNRows(); row++ ) {
 				for( col=0; col<fTimepix->GetNColumns(); col++ ) {
 					filestream >> adc;
-					if(adc) AddPixel(col,row,adc);
+					if(adc) AddPixel(row,col,adc);
 				}
 			}
 		} else { // if in 3xN format
 			while(filestream.getline(pBuffer,pBufferSize)) {
 				istringstream sstream(pBuffer);
 				sstream >> row >> col >> adc;
-				if(adc) AddPixel(col,row,adc);
+				if(adc) AddPixel(row,col,adc);
 			}
+		}
+		// Abort if empty
+		if( !fTimepix->GetNHits() ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: has no hits" << endl;
+			delete fTimepix;
+			return false;
+		}
+		// Remove timepixes that do not have proper number of hits (see global parameters)
+		if( fTimepix->GetNHits() < pMinNHits ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: fewer than " << pMinNHits << " hits" << endl;
+			delete fTimepix;
+			return false;
+		}
+		if( fTimepix->GetNHits() > pMaxNHits ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: more than " << pMaxNHits << " hits" << endl;
+			delete fTimepix;
+			return false;
 		}
 		// Put the timpix on the clipboard and close file stream
 		fClipboard->Put(fTimepix);
 		filestream.close();
-		// Warning message
-		if( !fTimepix->GetNHits() ) if(fDebug) cout << "  \"" << timepixname << "\" has no hits" << endl;
 		// See if file defines TPC1. If so, attempt to load corresponding TPC2
 		timepixname = filename;
 		if(timepixname.Contains(pTPC1id)) {
@@ -208,7 +224,8 @@
 	void TTimepixLoader::AddFileName(TString name)
 	{
 		if( name.EndsWith(".txt") ) {
-			if(!name.Contains(pTPC2id)) fInputFilenames.push_back(name.Data());
+			if(!name.Contains(pTPC2id)) if(!name.EndsWith(".info.txt"))
+				fInputFilenames.push_back(name.Data());
 			if(fDebug) cout << "  Added file: \"" << name << "\"" << endl;
 		}
 	}

@@ -59,6 +59,9 @@ public:
 		TBeamObjectList_t* Get(const char*);
 		TBeamObjectList_t* Get(TString&);
 		TBeamObjectList_t* Get(std::string&);
+		TBeamObject* GetFirst(const char*);
+		TBeamObject* GetFirst(TString&);
+		TBeamObject* GetFirst(std::string&);
 		TFile* GetOutputFile();
 	// Information
 		void CheckCollections();

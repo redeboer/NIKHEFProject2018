@@ -24,6 +24,7 @@
 	#include "TCaloAnalyseSpectrum.h"
 	#include "TMaskLoader.h"
 	#include "TTimepixLoader.h"
+	#include "TTimepixTranspose.h"
 	#include "TMaskGenerator.h"
 	#include "TSimulatedCaloLoader.h"
 	#include "TSimulatedEventLoader.h"
@@ -70,19 +71,20 @@ Int_t main(Int_t argc, char *argv[]) {
 		// analysis->Add( new TWriteReconstruction(clipboard,false) );
 		// analysis->Add( new TWriteSingle(clipboard,false) ); // Never run both single and reconstruction
 	} else {
-		//  analysis->Add( new TCaloLoader(clipboard,false) );
-		//  analysis->Add( new TCaloFitter(clipboard,false) );
-		//  analysis->Add( new TCaloWriter(clipboard,false) );
-		//  analysis->Add( new TCaloAnalyseSpectrum(clipboard,false) );
-		 analysis->Add( new TMaskLoader(clipboard,true) );
-		 analysis->Add( new TTimepixLoader(clipboard,true) );
-		 analysis->Add( new TMaskGenerator(clipboard,true) );
-		//  analysis->Add( new TRecogniseTracks(clipboard,false) );
-		//  analysis->Add( new TWriteTimepixHist(clipboard,false) );
-		//  analysis->Add( new TFitTracks(clipboard,false) );
-		//  analysis->Add( new TWriteTimepixGraph(clipboard,false) );
-		//  analysis->Add( new TIntersectTracks(clipboard,false) );
-		//  analysis->Add( new TWriteReconstruction(clipboard,false) );
+		analysis->Add( new TCaloLoader(clipboard,true) ); // load the calo first
+		analysis->Add( new TCaloFitter(clipboard,false) ); // because it always
+		analysis->Add( new TCaloWriter(clipboard,false) ); // has data
+		analysis->Add( new TCaloAnalyseSpectrum(clipboard,false) );
+		// analysis->Add( new TMaskLoader(clipboard,false) );
+		// analysis->Add( new TTimepixLoader(clipboard,false) );
+		// analysis->Add( new TTimepixTranspose(clipboard,false) );
+		// analysis->Add( new TMaskGenerator(clipboard,true) );
+		// analysis->Add( new TRecogniseTracks(clipboard,false) );
+		// analysis->Add( new TFitTracks(clipboard,false) );
+		// analysis->Add( new TWriteTimepixHist(clipboard,false) );
+		// analysis->Add( new TWriteTimepixGraph(clipboard,false) );
+		// analysis->Add( new TIntersectTracks(clipboard,false) );
+		// analysis->Add( new TWriteReconstruction(clipboard,false) );
 	}
 	/* -------------------------------------- */
 

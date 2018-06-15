@@ -5,12 +5,12 @@
 /* === CLASS DESCRIPTION =======
 	WARNING: TTimepixLoader has to be initialised and run before this algorithm!!
 	This algorithm makes a file that lists all pixels that have hits and puts the coordinates of those pixels to a txt file. This file can then serve as a mask file. The mask file is loaded with TMaskLoader. (Make sure to handle these classes smartly in the algorithm list in Steering.cxx.)
+	Note that the convention for coordinates is (row,column), as in a matrix, and for the dimension it is (nrows,ncols) = (height,width).
 */
 
 // === INCLUDES =======
 	#include "TMaskGenerator.h"
 	#include "TPixel.h"
-	#include <fstream>
 	#include <iostream>
 	using namespace std;
 	using namespace NIKHEFProject;
@@ -19,8 +19,17 @@
 
 	// INITIALISE FUNCTION: makes timepix mask object
 	void TMaskGenerator::Initialise() {
-		fPixelMask = (TPixelMask*)fClipboard->Get("pixelmask");
-		if(!fPixelMask) fPixelMask = new TPixelMask(pNCols,pNRows);
+		// If pixel mask already exists in clipboard, we will expand on it
+		fPixelMask = (TPixelMask*)fClipboard->GetFirst("pixelmask");
+		if(!fPixelMask) {
+			fPixelMask = new TPixelMask(pNRows,pNCols);
+			fClipboard->Put(fPixelMask);
+		}
+		// Open file stream
+		fFilestream.open(pMaskFileName);
+		cout << "Writing pixel mask to \"" << pMaskFileName << "\"" << endl;
+		// Reset counter
+		fCount = 0;
 	}
 
 	// RUN FUNCTION: in each event, load one frame of data from all devices
@@ -33,10 +42,21 @@
 		fTimepixIter = fTimepixList->begin();
 		TPixelIter_t pit;
 		while( fTimepixIter!=fTimepixList->end() ) {
-			// Loop over pixels and and mask them
-			pit = (*fTimepixIter)->GetPixels()->begin();
-			while( pit!=(*fTimepixIter)->GetPixels()->end() ) {
-				fPixelMask->MaskPixel( (*pit)->GetColumn(), (*pit)->GetRow() );
+			// Get timepix
+			fTimepix = *fTimepixIter;
+			// Loop over pixels and mask them if not yet done so
+			pit = fTimepix->GetPixels()->begin();
+			while( pit!=fTimepix->GetPixels()->end() ) {
+				// get coordinates
+				fRow = (*pit)->GetRow();
+				fCol = (*pit)->GetColumn();
+				// store if necessary
+				if( !fPixelMask->IsMasked(fRow,fCol) ) {
+					fPixelMask->MaskPixel(fRow,fCol);
+					fFilestream << fRow << " " << fCol << endl;
+					if(fDebug) cout << "  added pixel (" << setw(3) << fRow << "," << setw(3) << fCol << ") of \"" << fTimepix->GetName() << "\"" << endl;
+					++fCount;
+				}
 				++pit;
 			}
 			if(nodata) nodata = false;
@@ -51,14 +71,8 @@
 		return Success;
 	}
 
-	// FINALISE FUNCTION: write masked pixels and delete pixel mask object
+	// FINALISE FUNCTION: closes file stream
 	void TMaskGenerator::Finalise() {
-		// Write lines
-		ofstream file(pMaskFileName.Data());
-		for( UShort_t i=0; i<fPixelMask->GetMask().size(); ++i )
-			for( UShort_t j=0; j<fPixelMask->GetMask()[i].size(); ++j )
-				if(fPixelMask->GetMask()[i][j])
-					file << i << " " << j << endl;
-		// Delete pixel mask object
-		delete fPixelMask;
+		fFilestream.close();
+		if(fDebug) cout << "Writen " << fCount << " masked pixels to file \"" << pMaskFileName << "\"" << endl;
 	}

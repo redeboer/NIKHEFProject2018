@@ -44,14 +44,38 @@
 	}
 
 // === GETTERS =======
-	// Get objects from clipboard by name
-	TBeamObjectList_t* TClipboard::Get(string& name) {
-		return &fObjectsMap[name]; }
-	TBeamObjectList_t* TClipboard::Get(TString& name) {
-		string str(name.Data());
-		return &fObjectsMap[str]; }
-	TBeamObjectList_t* TClipboard::Get(const char* name) {
-		return &fObjectsMap[name]; }
+	// Get list of object types from clipboard by name
+	TBeamObjectList_t* TClipboard::Get(string& name)
+	{
+		return &fObjectsMap[name];
+	}
+	TBeamObjectList_t* TClipboard::Get(TString& str)
+	{
+		string name(str.Data());
+		return &fObjectsMap[name];
+	}
+	TBeamObjectList_t* TClipboard::Get(const char* name)
+	{
+		return &fObjectsMap[name];
+	}
+	// Get first beam object in the list by name
+	TBeamObject* TClipboard::GetFirst(string& name)
+	{
+		if(fObjectsMap[name].size()) return *(fObjectsMap[name].begin());
+		else return NULL;
+	}
+	TBeamObject* TClipboard::GetFirst(TString& str)
+	{
+		string name(str.Data());
+		if(fObjectsMap[name].size()) return *(fObjectsMap[name].begin());
+		else return NULL;
+	}
+	TBeamObject* TClipboard::GetFirst(const char* name)
+	{
+		if(fObjectsMap[name].size()) return *(fObjectsMap[name].begin());
+		else return NULL;
+	}
+	// Get pointer to output file
 	TFile* TClipboard::GetOutputFile() { return fFile; }
 
 // === INFORMATION FUNCTIONS =======
