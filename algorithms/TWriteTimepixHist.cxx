@@ -63,8 +63,10 @@
 	{
 		// Generate appropriate name and title
 		TString name(timepix->GetName());
+		TString title;
+		title.Form("%s (%u hits)",timepix->GetName().Data(),timepix->GetNHits());
 		// Create histogram of correct number of pixels
-		fHistogram = new TH2D( name.Data(), name.Data(), timepix->GetNColumns(), 0, timepix->GetNColumns(), timepix->GetNRows(), 0, timepix->GetNRows() );
+		fHistogram = new TH2D( name.Data(), title.Data(), timepix->GetNColumns(), 0, timepix->GetNColumns(), timepix->GetNRows(), 0, timepix->GetNRows() );
 		fHistogram->SetOption(pDrawHistoOption);
 		// Fill bins by looping over pixels in timepix
 		TPixelIter_t it = timepix->GetPixels()->begin();

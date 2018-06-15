@@ -25,6 +25,7 @@
 		} else cout << "  Opened calo file \"" << pCaloFileName << "\"" << endl;
 		// Determine number of events
 		DetermineNEvents();
+		cout << "  --> contains " << pTotalFiles << " events" << endl;
 	}
 
 	// RUN FUNCTION: read the next calo event in the text file and create a TCaloEvent from it
@@ -42,6 +43,7 @@
 		}
 		// Return SUCCESS if a calo event could be read from position in file stream
 		if(LoadCaloEvent()) return Success;
+		else Finished;
 		// Return NODATA if failure at position in file stream
 		return NoData;
 	}
@@ -58,19 +60,23 @@
 	{
 		pTotalFiles = 0;
 		ifstream in(pCaloFileName);
-		while(in.getline(pBuffer,pBufferSize))
-			if(!strcmp(pBuffer,"BoardID: 31")) ++pTotalFiles;
+		TString buffer;
+		while(in.getline(pBuffer,pBufferSize)) {
+			buffer = pBuffer;
+			if( buffer.Contains("BoardID: 31") ) ++pTotalFiles;
+		}
 		return pTotalFiles;
 	}
 
 	// Function that continues reading from current position in the ifstream and and creates a new TCaloEvent from the data in this file.
 	Bool_t TCaloLoader::LoadCaloEvent()
 	{
+		TString buffer;
 		// Check if file stream is still ok
-		if(!fFileStream.good()) {
-			if(fDebug) cout << "Problem reading \"" << pCaloFileName << "\"" << endl;
-			return false;
-		}
+		// if(!fFileStream.good()) {
+		// 	if(fDebug) cout << "Problem reading \"" << pCaloFileName << "\"" << endl;
+		// 	return false;
+		// }
 		// Read record length
 		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Record Length"
 		if(strcmp(pBuffer,"Record Length")) {
@@ -82,19 +88,22 @@
 		fFileStream.getline(pBuffer,pBufferSize); // finish line
 		// Check line "BoardID"
 		fFileStream.getline(pBuffer,pBufferSize);
-		if(strcmp(pBuffer,"BoardID: 31")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if( !buffer.Contains("BoardID: ") ) {
 			if(fDebug) cout << endl << "Board ID line incorrect format: " << pBuffer << endl;
 			return false;
 		}
 		// Check line "Channel"
 		fFileStream.getline(pBuffer,pBufferSize);
-		if(strcmp(pBuffer,"Channel: 0")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if(!buffer.Contains("Channel: ")) {
 			if(fDebug) cout << endl << "Channel line incorrect format: " << pBuffer << endl;
 			return false;
 		}
 		// Read event number
 		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Event Number"
-		if(strcmp(pBuffer,"Event Number")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if(!buffer.Contains("Event Number")) {
 			if(fDebug) cout << endl << "Event Number line incorrect format: " << pBuffer << endl;
 			return false;
 		}
@@ -103,13 +112,15 @@
 		fFileStream.getline(pBuffer,pBufferSize); // finish line
 		// Check line "Pattern"
 		fFileStream.getline(pBuffer,pBufferSize);
-		if(strcmp(pBuffer,"Pattern: 0x0000")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if(!buffer.Contains("Pattern: 0x0000")) {
 			if(fDebug) cout << endl << "Pattern line incorrect format: " << pBuffer << endl;
 			return false;
 		}
 		// Read timestamp and add to fCalorimeter
 		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Trigger Time Stamp"
-		if(strcmp(pBuffer,"Trigger Time Stamp")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if(!buffer.Contains("Trigger Time Stamp")) {
 			if(fDebug) cout << endl << "Timestamp line incorrect format: " << pBuffer << endl;
 			return false;
 		}
@@ -118,7 +129,8 @@
 		fFileStream.getline(pBuffer,pBufferSize); // finish line
 		// Check line "DC offset (DAC)"
 		fFileStream.getline(pBuffer,pBufferSize);
-		if(strcmp(pBuffer,"DC offset (DAC): 0x1999")) {
+		buffer = pBuffer; // added because of some sort of unicode
+		if(!buffer.Contains("DC offset (DAC): 0x1999")) {
 			if(fDebug) cout << endl << "DC offset line incorrect format: " << pBuffer << endl;
 			return false;
 		}
@@ -140,6 +152,6 @@
 		fCaloEvent->SetValue(0,0.); // was skipped in previous loop
 		fFileStream.getline(pBuffer,pBufferSize); // finish line
 		// Set energy
-		fCaloEvent->SetEnergy(fCaloEvent->GetHistogram()->Integral());
+		fCaloEvent->SetEnergy(fCaloEvent->GetHistogram()->Integral(1,fNCaloPoints+1));
 		return true;
 	}

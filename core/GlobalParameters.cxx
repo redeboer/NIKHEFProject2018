@@ -33,9 +33,11 @@ namespace NIKHEFProject {
 	UShort_t pNRows = 256;
 	UShort_t pNCols = 256;
 	Bool_t pMatrixFormat = true;
+	UInt_t pMinNHits = 200; // frames with fewer pixels will be rejected
+	UInt_t pMaxNHits = 1e4; // frames with more pixels will be rejected
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
-	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track)
+	UChar_t pMinClusterPixels = 100; // minimal number of points that a cluster (linear track)
 	const Double_t pTriggerCaloFit = 5; // bin content value that determines starting point of fit range
 	// IO names
 	// (it is possibly to only provide an input file or directory name)
@@ -53,7 +55,7 @@ namespace NIKHEFProject {
 	const Char_t* pTreeName = "fitparameters";
 	const Char_t* pTreeTitle = "Linear fit parameters of dominant tracks";
 	// Draw options
-	const Char_t* pDrawHistoOption = "colz"; // draw option for historgrams
+	const Char_t* pDrawHistoOption = ""; // draw option for historgrams
 	const Char_t* pDrawGraphOption = "pcol"; // draw option for graphs
 	Int_t pShowStats = 1<<9; // means: display no statistics pad
 	// Reconstruction parameters

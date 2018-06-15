@@ -21,15 +21,15 @@
 	{
 		// Create TTree
 		fTree = new TTree("calo_fits","fit results of calo events");
-		fTree->Branch("energy_sum",   &fEnergySum,   "energy_sum/D");
-		fTree->Branch("energy_lsp",   &fEnergyLSP,   "energy_lsp/D");
-		fTree->Branch("energy_landau",&fEnergyLandau,"energy_landau/D");
-		fTree->Branch("chi2_lsp",     &fChi2LSP,     "chi2_lsp/D");
-		fTree->Branch("chi2_landau",  &fChi2Landau,  "chi2_landau/D");
-		fTree->Branch("ndof_lsp",     &fNDoF_LSP,    "ndof_lsp/I");
-		fTree->Branch("ndof_landau",  &fNDoF_Landau, "ndof_landau/I");
-		fTree->Branch("chi2norm_lsp",   &fChi2LSP_norm,   "chi2norm_lsp/D");
-		fTree->Branch("chi2norm_landau",&fChi2Landau_norm,"chi2norm_landau/D");
+		fTree->Branch("energy_sum",   &fEnergySum,   "energy_sum/D",1e6);
+		fTree->Branch("energy_lsp",   &fEnergyLSP,   "energy_lsp/D",1e6);
+		fTree->Branch("energy_landau",&fEnergyLandau,"energy_landau/D",1e6);
+		fTree->Branch("chi2_lsp",     &fChi2LSP,     "chi2_lsp/D",1e6);
+		fTree->Branch("chi2_landau",  &fChi2Landau,  "chi2_landau/D",1e6);
+		fTree->Branch("ndof_lsp",     &fNDoF_LSP,    "ndof_lsp/I",1e6);
+		fTree->Branch("ndof_landau",  &fNDoF_Landau, "ndof_landau/I",1e6);
+		fTree->Branch("chi2norm_lsp",   &fChi2LSP_norm,   "chi2norm_lsp/D",1e6);
+		fTree->Branch("chi2norm_landau",&fChi2Landau_norm,"chi2norm_landau/D",1e6);
 		// Open TFile for calo analysis output
 		pCaloOutputFile = new TFile(pOutputCalo,"RECREATE");
 	}
@@ -57,28 +57,30 @@
 				printf("    Energy (sum): %.0f\n", fEnergySum );
 			}
 			// Fit calo data
-			Fit(); // (UN)COMMENT THIS IF NO FIT COMPUTATION
+			// Fit(); // (UN)COMMENT THIS IF NO FIT COMPUTATION
 			// output if fit has been performed
 			if( fFitLSP ) {
 				// Fill fit energy spectrum
 				// Compute tree values: longitudinal shower profile
-				fChi2LSP   = fFitLSP->GetChisquare();
-				fNDoF_LSP  = fFitLSP->GetNDF();
-				fChi2LSP_norm = fChi2LSP/fNDoF_LSP;
-				fEnergyLSP = fFitLSP->Integral(
-					fHist->GetXaxis()->GetXmin(), // or integrate from start value?
-					fHist->GetXaxis()->GetXmax()
-				);
+				if(fFitLSP) {
+					fChi2LSP   = fFitLSP->GetChisquare();
+					fNDoF_LSP  = fFitLSP->GetNDF();
+					fChi2LSP_norm = fChi2LSP/fNDoF_LSP;
+					fEnergyLSP = fFitLSP->Integral(
+						fHist->GetXaxis()->GetXmin(), // or integrate from start value?
+						fHist->GetXaxis()->GetXmax()
+					);
+				}
 				// Compute tree values: Landau profile
-				fChi2Landau  = fLandau->GetChisquare();
-				fNDoF_Landau    = fLandau->GetNDF();
-				fChi2Landau_norm = fChi2Landau/fNDoF_Landau;
-				fEnergyLandau = fLandau->Integral(
-					fHist->GetXaxis()->GetXmin(), // or integrate from start value?
-					fHist->GetXaxis()->GetXmax()
-				);
-				// Fill TTree
-				fTree->Fill();
+				if(fLandau) {
+					fChi2Landau  = fLandau->GetChisquare();
+					fNDoF_Landau    = fLandau->GetNDF();
+					fChi2Landau_norm = fChi2Landau/fNDoF_Landau;
+					fEnergyLandau = fLandau->Integral(
+						fHist->GetXaxis()->GetXmin(), // or integrate from start value?
+						fHist->GetXaxis()->GetXmax()
+					);
+				}
 				// Set fit energy: we choose the longitudinal shower profile for this
 				(*fCaloEventIter)->SetEnergyFit(fEnergyLSP);
 				// Debugging output: print fit parameters
@@ -108,6 +110,9 @@
 					}
 				}
 			}
+			// Fill TTree
+			// if(pEventNumber>=3e3) return Finished; // temporary fix
+			fTree->Fill();
 			// Return SUCCESS if finished
 			return Success;
 		}
@@ -162,7 +167,7 @@
 		);
 		// Fit histogram with fit function and compute energy
 		fHist->Fit(fFitLSP,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
-		fHist->Fit(fLandau,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
+		// fHist->Fit(fLandau,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
 		fHist->GetListOfFunctions()->Add(fFitLSP);
 		fHist->GetListOfFunctions()->Add(fLandau);
 		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram

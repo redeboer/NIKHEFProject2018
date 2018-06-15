@@ -192,11 +192,26 @@
 				if(adc) AddPixel(row,col,adc);
 			}
 		}
+		// Abort if empty
+		if( !fTimepix->GetNHits() ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: has no hits" << endl;
+			delete fTimepix;
+			return false;
+		}
+		// Remove timepixes that do not have proper number of hits (see global parameters)
+		if( fTimepix->GetNHits() < pMinNHits ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: fewer than " << pMinNHits << " hits" << endl;
+			delete fTimepix;
+			return false;
+		}
+		if( fTimepix->GetNHits() > pMaxNHits ) {
+			if(fDebug) cout << "  \"" << timepixname << "\" rejected: more than " << pMaxNHits << " hits" << endl;
+			delete fTimepix;
+			return false;
+		}
 		// Put the timpix on the clipboard and close file stream
 		fClipboard->Put(fTimepix);
 		filestream.close();
-		// Warning message
-		if( !fTimepix->GetNHits() ) if(fDebug) cout << "  \"" << timepixname << "\" has no hits" << endl;
 		// See if file defines TPC1. If so, attempt to load corresponding TPC2
 		timepixname = filename;
 		if(timepixname.Contains(pTPC1id)) {
