@@ -20,22 +20,27 @@
 	void TSimulatedCaloLoader::Initialise()
 	{
 		// Open filestream
-		string filename( pInput.Data() );
+		string filename( pCaloFileName );
 		fFilestream.open(filename);
 		if(!fFilestream.is_open()) {
-			cout << "Simulation calo event file \"" << filename << "\" does not exist\n" << endl;
+			cout << "Simulation calo event file \"" << pCaloFileName << "\" does not exist\n" << endl;
 			return;
 		}
-		cout << "Reading simulation calo event file \"" << pInput << "\"";
+		cout << "Reading simulation calo event file \"" << pCaloFileName << "\"";
 		fFilestream.getline(pBuffer,pBufferSize);
 		if(fDebug) cout <<  " with format:" << endl << pBuffer << endl;
 		else cout << endl;
 		// Count number of lines after header
-		while(fFilestream.getline(pBuffer,pBufferSize)) ++pTotalFiles;
+		pTotalFiles = 0;
+		while(fFilestream.getline(pBuffer,pBufferSize)){ 
+			++pTotalFiles;
+		}
 		if(fDebug) cout << "(contains " << pTotalFiles << " events)" << endl;
 		// Reopen file stream
 		fFilestream.close();
 		fFilestream.open(filename);
+		//read in initializing line
+		fFilestream.getline(pBuffer,pBufferSize);
 	}
 
 	// RUN FUNCTION: in each event, load one frame of data from all devices

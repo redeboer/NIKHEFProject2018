@@ -159,10 +159,10 @@
 		// Project to xy plane (ignore drift direction)
 		fRecPoints3Dxy = (TH2S*)fRecPoints3D->Project3D("yx");
 		fRecPoints3Dxz = (TH2S*)fRecPoints3D->Project3D("zx");
-		fRecPoints3Dyz = (TH2S*)fRecPoints3D->Project3D("zy");
+		fRecPoints3Dyz = (TH2S*)fRecPoints3D->Project3D("yz");
 		fRecEnergy3Dxy = (TH2D*)fRecEnergy3D->Project3D("yx");
 		fRecEnergy3Dxz = (TH2D*)fRecEnergy3D->Project3D("zx");
-		fRecEnergy3Dyz = (TH2D*)fRecEnergy3D->Project3D("zy");
+		fRecEnergy3Dyz = (TH2D*)fRecEnergy3D->Project3D("yz");
 		fRecEnergy3Dxy->Divide(fRecPoints3Dxy);
 		fRecEnergy3Dxz->Divide(fRecPoints3Dxz);
 		fRecEnergy3Dyz->Divide(fRecPoints3Dyz);
