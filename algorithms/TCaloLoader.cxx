@@ -136,8 +136,16 @@
 		}
 		// Create TCaloEvent
 		fCaloEvent = new TCaloEvent(fEventNumber,fTimestamp,fNCaloPoints);
-		fClipboard->Put(fCaloEvent);
+		Int_t zero_counter = 0;
+		Int_t true_counter = 0;
+		Int_t lower_counter = 0;
+		Int_t late_counter = 0;
+		Double_t value_buffer = -100;
+		bool peak_reached = false;
+		Int_t second_peak_counter = 0;
+		Double_t peak_value = 0;
 		// Read all values of calo event (usually 1024)
+		bool Succesful_event = false;
 		for(Int_t i=0; i<fNCaloPoints; ++i) {
 			// read value
 			fFileStream >> fValue;
@@ -146,12 +154,43 @@
 				fValue -= fCaloEvent->GetValue(0);
 				fValue *= -1;
 			}
+			if(fValue == 0) zero_counter++;
+			if(fValue > 100) {
+				true_counter++;
+				if(i > 250) late_counter++;
+				if(i%25 == 0){
+					if(fValue < value_buffer){
+						if(value_buffer > peak_value && peak_reached == false) {
+							peak_value = value_buffer;
+							peak_reached = true;
+						}	
+					}
+					if(peak_reached == true && fValue > value_buffer) {
+						if(fValue/peak_value > 0.4) second_peak_counter++;
+					}
+				}
+
+			}
+			if(i > 250 && fValue < 0) lower_counter++;
 			// store value
 			fCaloEvent->SetValue(i,fValue); // puts value fFileStream list
+			if(i%25 == 0) value_buffer = fValue;
 		}
-		fCaloEvent->SetValue(0,0.); // was skipped in previous loop
+		if(true_counter > 10) Succesful_event = true; //criteria to root out bad events
+		if(true_counter == late_counter) Succesful_event = false; //if event started to late
+		if(1024-zero_counter < 700) Succesful_event = false; //700 entries at least
+		if(lower_counter > 0) Succesful_event = false; //if event started to early
+		if(second_peak_counter > 0 && Succesful_event == true) Succesful_event = false; //if second peak in spectrum
+
 		fFileStream.getline(pBuffer,pBufferSize); // finish line
-		// Set energy
-		fCaloEvent->SetEnergy(fCaloEvent->GetHistogram()->Integral(1,fNCaloPoints+1));
+
+		if(Succesful_event) {
+			fClipboard->Put(fCaloEvent);
+			fCaloEvent->SetValue(0,0.); // was skipped in previous loop
+			// Set energy
+			fCaloEvent->SetEnergy(fCaloEvent->GetHistogram()->Integral(1,fNCaloPoints+1));
+		} else{
+			delete fCaloEvent;
+		}
 		return true;
 	}

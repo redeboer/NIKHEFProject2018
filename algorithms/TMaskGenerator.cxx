@@ -12,6 +12,7 @@
 	#include "TMaskGenerator.h"
 	#include "TPixel.h"
 	#include <iostream>
+	#include <iomanip>
 	using namespace std;
 	using namespace NIKHEFProject;
 
