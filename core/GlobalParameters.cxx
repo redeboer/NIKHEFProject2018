@@ -30,11 +30,14 @@ namespace NIKHEFProject {
 	const Double_t pEnergyConvFactor = 5.0e-4; // determine this using TCaloAnalyseSpectrum
 	TFile* pCaloOutputFile = NULL;
 	// Default timepix settings (will be used as minimum)
-	UShort_t pNCols = 256;
 	UShort_t pNRows = 256;
+	UShort_t pNCols = 256;
+	Bool_t pMatrixFormat = true;
+	UInt_t pMinNHits = 200; // frames with fewer pixels will be rejected
+	UInt_t pMaxNHits = 1e4; // frames with more pixels will be rejected
 	// Fit parameters
 	UChar_t pMaxNFits = 3; // maximum number of identified tracks
-	UChar_t pMinClusterPixels = 5; // minimal number of points that a cluster (linear track)
+	UChar_t pMinClusterPixels = 100; // minimal number of points that a cluster (linear track)
 	const Double_t pTriggerCaloFit = 5; // bin content value that determines starting point of fit range
 	// IO names
 	// (it is possibly to only provide an input file or directory name)
@@ -52,7 +55,7 @@ namespace NIKHEFProject {
 	const Char_t* pTreeName = "fitparameters";
 	const Char_t* pTreeTitle = "Linear fit parameters of dominant tracks";
 	// Draw options
-	const Char_t* pDrawHistoOption = "colz"; // draw option for historgrams
+	const Char_t* pDrawHistoOption = ""; // draw option for historgrams
 	const Char_t* pDrawGraphOption = "pcol"; // draw option for graphs
 	Int_t pShowStats = 1<<9; // means: display no statistics pad
 	// Reconstruction parameters
@@ -84,6 +87,78 @@ namespace NIKHEFProject {
 			if(!file.is_open()) cout << "  File \"" << filename << "\" does not exist" << endl;
 			else cout << "  Opening file \"" << filename << "\"" << endl;
 		}
+	}
+	// Function that determines timepix size and file format of txt file
+	Bool_t IsMatrixFormat(const char* filename, Bool_t debug)
+	{
+		// Get first line and create string stream
+		ifstream filestream;
+		OpenFile(filestream,filename);
+		filestream.getline(pBuffer,pBufferSize);
+		istringstream sstream(pBuffer);
+		// Read first three values
+		UShort_t val;
+		sstream >> val >> val >> val;
+		// Is matrix format if 4th value exist
+		if(sstream >> val) pMatrixFormat = true;
+		else               pMatrixFormat = false;
+		// Close file stream and return
+		filestream.close();
+		if(debug) {
+			if(pMatrixFormat) cout << "  --> matrix format" << endl;
+			else              cout << "  --> 3xN format" << endl;
+		}
+		return pMatrixFormat;
+	}
+	// Function that determines timepix size (nrows and ncols) and file format of txt file. 
+	Bool_t DetermineFileFormat(const char* filename, Bool_t debug)
+	{
+		if(debug) cout << "  Determining timepix file format of \"" << filename <<  "\"" << endl;
+		// Generate file stream
+		ifstream filestream;
+		OpenFile(filestream,filename); // debug can be added here if needed
+		// Some counters and read dumps
+		UInt_t nlines = 0;
+		UInt_t nvals  = 0;
+		Int_t val;
+		// Read lines
+		while( filestream.getline(pBuffer,pBufferSize) ) {
+			istringstream sstream(pBuffer); // create line stream from filestream
+			// get 1st two values in line and store if maximum
+			sstream >> val; if( val>pNRows ) pNRows = val;
+			sstream >> val; if( val>pNCols ) pNCols = val;
+			nvals+=2; // count number of values read
+			while(sstream >> val) ++nvals; // count remaining number of values
+			++nlines; // count number of lines
+		}
+		// Abort if empty
+		if(nvals==0) {
+			if(debug) cout << "  --> file is empty" << endl;
+			return false;
+		}
+		// Verify if text file is a rectangular block of values
+		if( nvals%nlines!=0 ) {
+			if(debug) cout << "  --> not a rectangular block of values." << endl;
+			return false;
+		}
+		// Set file and timepix dimensions and matrix format bit
+		nvals /= nlines;
+		if(nvals==3) { // maximum value if 3xN format (rounded to next pwer of 2)
+			pNRows = PowerOfTwo(pNRows);
+			pNCols = PowerOfTwo(pNCols);
+			pMatrixFormat = false;
+		} else { // just the matrix size if in matrix format
+			pNRows = nlines;
+			pNCols = nvals;
+			pMatrixFormat = true;
+		}
+		// Close file stream and return
+		filestream.close();
+		if(debug) {
+			cout << "  --> file dimensions:    " << nlines << " lines x " << nlines << " columns" << endl;
+			cout << "  --> timepix dimensions: height " << pNRows << " x width " << pNCols << endl;
+		}
+		return true;
 	}
 
 // === STRING FUNCTIONS =======
@@ -241,7 +316,7 @@ namespace NIKHEFProject {
 		cout<<endl;
 		cout<<"===================| Reading parameters  |===================="<<endl<<endl;
 		Int_t option;
-		while ( (option=getopt(argc,argv,"esi:o:c:")) != -1) switch (option) {
+		while ( (option=getopt(argc,argv,"se:i:o:c:m:")) != -1) switch (option) {
 			case 's':
 				pSimulationData = true;
 				cout<<"Analysing simulation data from text file"<<endl;
@@ -254,7 +329,11 @@ namespace NIKHEFProject {
 				pInput = FormatInputString(optarg);
 				if(pSimulationData) cout<<"Reading simulation from: "<<pInput<<endl;
 				else cout<<"Reading measurement data from: "<<pInput<<endl;
+				// Set dependent file names
+				pCaloFileName = FormatCaloFileString(pInput.Data());
 				pOutput = FormatOutputString(pInput.Data());
+				pOutputCalo = FormatOutputCaloString(pInput.Data());
+				pMaskFileName = FormatMaskFileString(pInput.Data());
 				break;
 			case 'o':
 				pOutput = optarg;

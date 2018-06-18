@@ -5,7 +5,7 @@
 
 /* === CLASS DESCRIPTION =======
 	An event loader is necessary for any analysis sequence. This event loader loads data from each detector in each event and places that data on the clipboard for further analysis.
-	(For now, this means it only reads data files from timepix detectors.)
+	Note that the convention for coordinates is (row,column), as in a matrix, and for the dimension it is (nrows,ncols) = (height,width).
 */
 
 #ifndef TTIMEPIXLOADER_H
@@ -13,9 +13,11 @@
 
 // === INCLUDES =======
 	#include "TString.h"
+	#include "TPixelMask.h"
 	#include "TSystemDirectory.h"
 	#include <string>
 	#include <list>
+	#include "TTimepix.h"
 	#include "TAlgorithm.h"
 
 // === CLASS DEFINITION =======
@@ -25,9 +27,9 @@ public:
 	// Constructors and destructors
 	// no writing operation, so writing bit set to false
 	TTimepixLoader(TClipboard* cp)
-		: TAlgorithm(cp,"TTimepixLoader",false) {}
+		: TAlgorithm(cp,"TTimepixLoader",false), fPixelMask(NULL) {}
 	TTimepixLoader(TClipboard* cp, Bool_t debug)
-		: TAlgorithm(cp,"TTimepixLoader",false,debug) {}
+		: TAlgorithm(cp,"TTimepixLoader",false,debug), fPixelMask(NULL) {}
 	~TTimepixLoader() {}
 
 	// Algorithm step functions
@@ -44,11 +46,12 @@ private:
 	Bool_t ExtractZipFile(TString);
 	void AddFileName(TString);
 	Bool_t ReadDSC(const char*);
-	Bool_t DetermineFileFormat(const char*);
-	Bool_t IsMatrixFormat(const char*);
+	void AddPixel(UShort_t,UShort_t,UShort_t);
 	Bool_t LoadTimepix(const char*);
+	// Data member pointers
+	TTimepix* fTimepix;
+	TPixelMask* fPixelMask;
 	// Data members
-	Bool_t fMatrixFormat;
 	Bool_t fHasDSC;
 	TString fCurrentDir;
 	std::list<std::string> fInputFilenames;
@@ -56,8 +59,6 @@ private:
 	std::list<std::string>::iterator fFileIterator;
 	// Read dump
 	std::string fDummy;
-	UShort_t fNCols; // "width" of timepix
-	UShort_t fNRows; // "height" of timepix
 	Double_t fMpxClock; // medipix clock frequency [MHz]
 	Double_t fAcqTime;  // acquisition time [s]
 	Double_t fStartTime; // recorded start time [s?]

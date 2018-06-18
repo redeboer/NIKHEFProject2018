@@ -49,7 +49,7 @@
 			if((*it)->CanWrite()) {
 				(*it)->SetDirectory(fClipboard->GetOutputFile()->mkdir((*it)->GetName().c_str()));
 			}
-			cout<<"["<<(*it)->GetName()<<"] Initialising"<<endl;
+			cout << "[" << (*it)->GetName() << "] Initialising..." << endl;
 			// Initialise the algorithm
 			(*it)->Initialise();
 			++it;
@@ -128,7 +128,7 @@
 	{
 		// Start finalise operation
 		cout << endl
-			<< "=================| Initialising algorithms |=================="
+			<< "=================| Finalising algorithms |=================="
 			<< endl;
 		// Start stopwatch for finalise operation
 		fLocalStopwatch = new TStopwatch();

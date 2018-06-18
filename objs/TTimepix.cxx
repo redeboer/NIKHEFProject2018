@@ -30,15 +30,15 @@
 	ULong64_t TTimepix::GetTimestamp() const { return fTimestamp; }
 	TPixelList_t* TTimepix::GetPixels() { return &fPixels; }
 	UInt_t TTimepix::GetNHits() const { return fPixels.size(); }
-	UShort_t TTimepix::GetNColumns() const { return fNCols; }
 	UShort_t TTimepix::GetNRows() const { return fNRows; }
+	UShort_t TTimepix::GetNColumns() const { return fNCols; }
 	Double_t TTimepix::GetFrequency() const { return fMpxClock; }
 	Double_t TTimepix::GetAcquisitionTime() const { return fAcqTime; }
 	Double_t TTimepix::GetStartTime() const { return fStartTime; }
-	void TTimepix::GetSize(UShort_t& ncols, UShort_t& nrows)
+	void TTimepix::GetSize(UShort_t& nrows, UShort_t& ncols)
 	{
-		ncols = fNCols;
 		nrows = fNRows;
+		ncols = fNCols;
 	}
 
 // === MODIFIERS =======
@@ -47,8 +47,11 @@
 	void TTimepix::SetName(const char* name) { fName = name; }
 	// Set cluster parameters
 	void TTimepix::SetTimestamp(ULong64_t timestamp) { fTimestamp = timestamp; }
-	void TTimepix::SetSize(UShort_t ncols, UShort_t nrows)
-		{ fNCols = ncols; fNRows = nrows; }
+	void TTimepix::SetSize(UShort_t nrows, UShort_t ncols)
+	{
+		fNRows = nrows;
+		fNCols = ncols;
+	}
 	void TTimepix::SetFrequency(Double_t freq) { fMpxClock = freq; }
 	void TTimepix::SetAcquisitionTime(Double_t t) { fAcqTime = t; }
 	void TTimepix::SetStartTime(Double_t t) { fStartTime = t; }
@@ -62,7 +65,7 @@
 	{
 		if(fPixels.size()) {
 			cout << "Timepix \"" << fName << "\" contains " << fPixels.size() << " pixels:" << endl;
-			cout << "  column\trow\tadc" << endl;
+			cout << "  row\tcolumn\tadc" << endl;
 			TPixelIter_t it = fPixels.begin();
 			while( it!=fPixels.end() ) {
 				(*it)->Print();
@@ -81,15 +84,15 @@
 		UInt_t i=0;
 		TPixelIter_t it = fPixels.begin();
 		while( it!=fPixels.end() ) {
-			x[i] = (*it)->GetColumn();
 			x[i] = (*it)->GetRow();
-			y[i] = (*it)->GetADC();
+			y[i] = (*it)->GetColumn();
+			z[i] = (*it)->GetADC();
 			++it;
 			++i;
 		}
 	}
-	// Function that geometrically adds ncols and nrows (for Rmax in Hough transform)
+	// Function that geometrically adds nrows and ncols (for Rmax in Hough transform)
 	Double_t TTimepix::GetDiagonal()
 	{
-		return TMath::Sqrt( fNCols*fNCols + fNRows*fNRows );
+		return TMath::Sqrt( fNRows*fNRows + fNCols*fNCols );
 	}

@@ -21,7 +21,7 @@ class TSingleTracks : public TAlgorithm {
 
 public:
 	// Constructors and destructors
-	// set writing bit to true if you want to see 2D Hough transforms
+	// has no writing operation
 	TSingleTracks(TClipboard* cp)
 		: TAlgorithm(cp,"TSingleTracks",false) {}
 	TSingleTracks(TClipboard* cp, Bool_t debug)

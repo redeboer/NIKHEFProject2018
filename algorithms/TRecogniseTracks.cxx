@@ -78,7 +78,7 @@
 			Double_t r;
 			TPixelIter_t it = fRemainder->GetPixels()->begin();
 			while( it!=fRemainder->GetPixels()->end() ) {
-				r = ComputeHoughR( (*it)->GetColumn(), (*it)->GetRow(), maxP );
+				r = ComputeHoughR( (*it)->GetRow(), (*it)->GetColumn(), maxP );
 				if( r>tR1 && r<tR2 ) fCluster->GetPixels()->push_back(*it); // add to track
 				else               tRemainder->GetPixels()->push_back(*it); // or to new remainder
 				++it;
@@ -110,7 +110,7 @@
 			x*TMath::Cos( TMath::DegToRad() * phi ) +
 			y*TMath::Sin( TMath::DegToRad() * phi );
 	}
-	// Function that generates the 2D Hough transform for some timepix (column vs row)
+	// Function that generates the 2D Hough transform for some timepix (row as x, column as y)
 	TH2I* TRecogniseTracks::MakeHough2D(TTimepix* timepix)
 	{
 		// generate name and histogram for Hough transform
@@ -125,8 +125,8 @@
 		Double_t x, y, r, phi;
 		TPixelIter_t it = timepix->GetPixels()->begin();
 		while( it!=timepix->GetPixels()->end() ) {
-			x = (*it)->GetColumn();
-			y = (*it)->GetRow();
+			x = (*it)->GetRow();
+			y = (*it)->GetColumn();
 			// fill bins of Hough transform for each phi
 			for( UShort_t p=0; p<pPSteps; ++p ) {
 				phi = p*pPStep;

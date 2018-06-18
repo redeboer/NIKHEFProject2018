@@ -13,23 +13,35 @@
 
 // === CONSTRUCTORS =======
 	// Constructors and destructors
-	TPixel::TPixel(UShort_t col, UShort_t row, UShort_t adc) {
-		fCol = col;
+	TPixel::TPixel(UShort_t row, UShort_t col, UShort_t adc) {
 		fRow = row;
+		fCol = col;
 		fADC = adc;
 	}
 	TPixel::~TPixel() {}
+
 // === GETTERS =======
-	UShort_t TPixel::GetColumn() const { return fCol; };
 	UShort_t TPixel::GetRow() const { return fRow; };
+	UShort_t TPixel::GetColumn() const { return fCol; };
 	UShort_t TPixel::GetADC() const { return fADC; };
-	void TPixel::Get( UShort_t& col, UShort_t& row, UShort_t& adc ) const
+	void TPixel::Get( UShort_t& row, UShort_t& col, UShort_t& adc ) const
 	{
-		col = fCol;
 		row = fRow;
+		col = fCol;
 		adc = fADC;
+	}
+
+// === SETTERS =======
+	void TPixel::SetRow(UShort_t& row) { fRow = row; };
+	void TPixel::SetColumn(UShort_t& col) { fCol = col; };
+	void TPixel::SetADC(UShort_t& adc) { fADC = adc; };
+	void TPixel::Set( UShort_t& row, UShort_t& col, UShort_t& adc )
+	{
+		fRow = row;
+		fCol = col;
+		fADC = adc;
 	}
 
 // === INFORMATION =======
 	void TPixel::Print() {
-		cout << "  " << fCol << "\t" << fRow << "\t" << fADC << endl; }
+		cout << "  " << fRow << "\t" << fCol << "\t" << fADC << endl; }

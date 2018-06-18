@@ -19,11 +19,11 @@ class TTimepix : public TBeamObject {
 public:
 	// Constructors and destructors
 		TTimepix(const char* name, ULong_t timestamp)
-			: fName(name), fTimestamp(timestamp), fNCols(0), fNRows(0), fMpxClock(0), fAcqTime(0), fStartTime(0) {}
+			: fName(name), fTimestamp(timestamp), fNRows(0), fNCols(0), fMpxClock(0), fAcqTime(0), fStartTime(0) {}
 		TTimepix(const char* name, ULong_t timestamp, UShort_t ncols, UShort_t nrows, Double_t freq, Double_t acqtime, Double_t stime)
-			: fName(name), fTimestamp(timestamp), fNCols(ncols), fNRows(nrows), fMpxClock(freq), fAcqTime(acqtime), fStartTime(stime) {}
+			: fName(name), fTimestamp(timestamp), fNRows(nrows), fNCols(ncols), fMpxClock(freq), fAcqTime(acqtime), fStartTime(stime) {}
 		TTimepix(TTimepix* tp) // copy constructor only copies, not pixels!
-			: fName(tp->GetName()), fTimestamp(tp->GetTimestamp()), fNCols(tp->GetNColumns()), fNRows(tp->GetNRows()), fMpxClock(tp->GetFrequency()), fAcqTime(tp->GetAcquisitionTime()), fStartTime(tp->GetStartTime()) {}
+			: fName(tp->GetName()), fTimestamp(tp->GetTimestamp()), fNRows(tp->GetNRows()), fNCols(tp->GetNColumns()), fMpxClock(tp->GetFrequency()), fAcqTime(tp->GetAcquisitionTime()), fStartTime(tp->GetStartTime()) {}
 		~TTimepix() {}
 		TTimepix* Clone();
 	// Getters
@@ -31,8 +31,8 @@ public:
 		ULong64_t GetTimestamp() const;
 		TPixelList_t* GetPixels();
 		UInt_t GetNHits() const;
-		UShort_t GetNColumns() const;
 		UShort_t GetNRows() const;
+		UShort_t GetNColumns() const;
 		Double_t GetFrequency() const;
 		Double_t GetAcquisitionTime() const;
 		Double_t GetStartTime() const;
@@ -55,8 +55,8 @@ private:
 	TString fName; // file name without extension
 	ULong64_t fTimestamp;
 	TPixelList_t fPixels; // list of hit pixels
-	UShort_t fNCols; // "width" of timepix
 	UShort_t fNRows; // "height" of timepix
+	UShort_t fNCols; // "width" of timepix
 	Double_t fMpxClock; // medipix clock frequency [MHz]
 	Double_t fAcqTime;  // acquisition time [s]
 	Double_t fStartTime; // recorded start time [s?]
