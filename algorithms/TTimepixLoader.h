@@ -14,7 +14,6 @@
 // === INCLUDES =======
 	#include "TString.h"
 	#include "TPixelMask.h"
-	#include "TSystemDirectory.h"
 	#include <string>
 	#include <list>
 	#include "TTimepix.h"
@@ -42,9 +41,9 @@ public:
 
 private:
 	// Private functions
+	void AddFileName(TString);
 	void AddFileNames(TString);
 	Bool_t ExtractZipFile(TString);
-	void AddFileName(TString);
 	Bool_t ReadDSC(const char*);
 	void AddPixel(UShort_t,UShort_t,UShort_t);
 	Bool_t LoadTimepix(const char*);
@@ -62,7 +61,6 @@ private:
 	Double_t fMpxClock; // medipix clock frequency [MHz]
 	Double_t fAcqTime;  // acquisition time [s]
 	Double_t fStartTime; // recorded start time [s?]
-
 
 };
 
