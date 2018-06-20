@@ -46,4 +46,4 @@ private:
 
 };
 
-#endif // TTIMEPIXEVENTLOADER_H
+#endif // TCALOLOADER_H
