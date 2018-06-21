@@ -39,7 +39,7 @@ In preparation to the data taking, we also performed simulations in Geant. Outpu
 
 ![Algorithm structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_algorithms.png "Algorithm structure")
 
-The order of processing is, of course, sequentially, but the arrows here denote the which altorithms need rely on the output of the previous ones.
+The order of processing these algorithms is, of course, sequentially, but the arrows here indicate which altorithms rely on the output of previous ones.
 
 In our project, one of our TPCs unfortunately broke down, so in the end, we were not able to intersect tracks. The TPC after the sample was therefore removed, so the intersecting algorithms became redundant. Also, it turned out to be difficult to properly trigger the remaining TPC, so a the z-component could also not be computed. The output was therefore a 1-dimensional profile of energy loss in the sample.
 
@@ -54,6 +54,6 @@ Compiling everything is done easily using `make`, which simply follows the `Make
 
 In the first case, the default input file as defined in `GlobalParameters.cxx` is used. The calorimeter data file name is then just set to 'input file name' + `_calo.txt` and the output file name `output/` + 'input file name' + `.root`. This behaviour can be changed in the paramters. Otherwise, you can specify the calo file name and/or the output file name using option `-c` and option `-o` respectively.
 
-If you are on Linux and have no CERN ROOT installed, you will have to install it prior to `make`. For this, you run the shell script `Install CERN ROOT6.sh` (or just read that script as a guide).
+If you are on Linux and have no CERN ROOT installed, you will have to install it prior to `make`. For this, you run the shell script `Install CERN ROOT6.sh` under `docs` (or just read that script as a guide).
 
 Note that `TTimepixLoader` uses `aunpack` to unzip `zip` or `tar` files. If you intent to work with zipped files, install `atool` using `sudo apt-get install atool`.
