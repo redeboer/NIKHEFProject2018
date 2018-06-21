@@ -51,10 +51,10 @@
 		// Make histograms
 		TH1I* hist_sum = new TH1I("energy_sum",
 			"Enery spectrum computed with sum",
-			200, 0, 12e5 ); // 0, tree->GetMaximum("energy_sum")
+			200, 0, 1e6 ); // 0, tree->GetMaximum("energy_sum")
 		TH1I* hist_fit = new TH1I("energy_fit",
 			"Enery spectrum computed with LSP fit",
-			200, 0, 12e5 ); // 0, tree->GetMaximum("energy_fit")
+			200, 0, 1e6 ); // 0, tree->GetMaximum("energy_fit")
 		// Loop over Tree to make histograms
 		for( Long64_t i=0; i<nentries; ++i ) {
 			tree->GetEntry(i);
