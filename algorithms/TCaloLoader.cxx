@@ -1,4 +1,4 @@
-// Author: Remco de Boer
+// Authors: Lizette Lamers and Remco de Boer
 // Date: June 8th, 2018
 // For NIKHEF Project 2018
 
