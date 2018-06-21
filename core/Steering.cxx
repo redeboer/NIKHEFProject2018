@@ -71,7 +71,7 @@ Int_t main(Int_t argc, char *argv[]) {
 		// analysis->Add( new TWriteReconstruction(clipboard,false) );
 		// analysis->Add( new TWriteSingle(clipboard,false) ); // Never run both single and reconstruction
 	} else {
-		analysis->Add( new TCaloLoader(clipboard,true) ); // load the calo first
+		analysis->Add( new TCaloLoader(clipboard,false) ); // load the calo first
 		analysis->Add( new TCaloFitter(clipboard,false) ); // because it always
 		analysis->Add( new TCaloWriter(clipboard,false) ); // has data
 		analysis->Add( new TCaloAnalyseSpectrum(clipboard,false) );
