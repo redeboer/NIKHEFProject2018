@@ -149,87 +149,22 @@
 	// Function that reads a calo event from a text file
 	Bool_t TCaloLoader2013::LoadCaloEvent(const char* filename)
 	{
-		TString buffer;
-		// Check if file stream is still ok
-		// if(!fFileStream.good()) {
-		// 	if(fDebug) cout << "Problem reading \"" << pCaloFileName << "\"" << endl;
-		// 	return false;
-		// }
-		// Read record length
-		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Record Length"
-		if(strcmp(pBuffer,"Record Length")) {
-			if(fDebug) cout << endl << "Record Length line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		fFileStream.get(); // read ':'
-		fFileStream >> fNCaloPoints;
-		fFileStream.getline(pBuffer,pBufferSize); // finish line
-		// Check line "BoardID"
-		fFileStream.getline(pBuffer,pBufferSize);
-		buffer = pBuffer; // added because of some sort of unicode
-		if( !buffer.Contains("BoardID: ") ) {
-			if(fDebug) cout << endl << "Board ID line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		// Check line "Channel"
-		fFileStream.getline(pBuffer,pBufferSize);
-		buffer = pBuffer; // added because of some sort of unicode
-		if(!buffer.Contains("Channel: ")) {
-			if(fDebug) cout << endl << "Channel line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		// Read event number
-		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Event Number"
-		buffer = pBuffer; // added because of some sort of unicode
-		if(!buffer.Contains("Event Number")) {
-			if(fDebug) cout << endl << "Event Number line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		fFileStream.get(); // read ':'
-		fFileStream >> fEventNumber;
-		fFileStream.getline(pBuffer,pBufferSize); // finish line
-		// Check line "Pattern"
-		fFileStream.getline(pBuffer,pBufferSize);
-		buffer = pBuffer; // added because of some sort of unicode
-		if(!buffer.Contains("Pattern: 0x0000")) {
-			if(fDebug) cout << endl << "Pattern line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		// Read timestamp and add to fCalorimeter
-		fFileStream.getline(pBuffer,pBufferSize,':'); // check words "Trigger Time Stamp"
-		buffer = pBuffer; // added because of some sort of unicode
-		if(!buffer.Contains("Trigger Time Stamp")) {
-			if(fDebug) cout << endl << "Timestamp line incorrect format: " << pBuffer << endl;
-			return false;
-		}
-		fFileStream.get(); // read ':'
-		fFileStream >> fTimestamp;
-		fFileStream.getline(pBuffer,pBufferSize); // finish line
-		// Check line "DC offset (DAC)"
-		fFileStream.getline(pBuffer,pBufferSize);
-		buffer = pBuffer; // added because of some sort of unicode
-		if(!buffer.Contains("DC offset (DAC): 0x1999")) {
-			if(fDebug) cout << endl << "DC offset line incorrect format: " << pBuffer << endl;
-			return false;
-		}
+		// Check number of lines
+		OpenFile(fFilestream,pCaloFileName.Data(),fDebug);
+		fNCaloPoints = 0;
+		while(fFilestream>>fValue) ++fNCaloPoints;
+		fFilestream.close();
 		// Create TCaloEvent
-		fCaloEvent = new TCaloEvent(fEventNumber,fTimestamp,fNCaloPoints);
+		fCaloEvent = new TCaloEvent(pEventNumber,0,fNCaloPoints);
 		fClipboard->Put(fCaloEvent);
 		// Read all values of calo event (usually 1024)
-		for(Int_t i=0; i<fNCaloPoints; ++i) {
-			// read value
-			fFileStream >> fValue;
-			// flip value if not first value
-			if(i) {
-				fValue -= fCaloEvent->GetValue(0);
-				fValue *= -1;
-			}
-			// store value
-			fCaloEvent->SetValue(i,fValue); // puts value fFileStream list
+		OpenFile(fFilestream,pCaloFileName.Data());
+		Int_t point = 0;
+		while(fFilestream>>fValue) {
+			fCaloEvent->SetValue(point,fValue);
+			++point;
 		}
-		fCaloEvent->SetValue(0,0.); // was skipped in previous loop
-		fFileStream.getline(pBuffer,pBufferSize); // finish line
 		// Set energy
-		fCaloEvent->SetEnergy(fCaloEvent->GetHistogram()->Integral(1,fNCaloPoints+1));
+		fCaloEvent->SetEnergy( fCaloEvent->GetHistogram()->Integral(1,fNCaloPoints+1));
 		return true;
 	}

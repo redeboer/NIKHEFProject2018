@@ -48,10 +48,12 @@ private:
 	// Data members
 	TCaloEvent* fCaloEvent;
 	// Data members
+	std::ifstream fFilestream;
 	TString fCurrentDir;
 	std::list<std::string> fInputFilenames;
 	std::list<std::string> fZipFolderNames;
 	std::list<std::string>::iterator fFileIterator;
+	UInt_t fEventNumber;
 	// Read dump
 	Int_t fNCaloPoints; // number of data points (lines) in the calorimeter
 	Double_t fValue;    // value of calo data point
