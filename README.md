@@ -52,7 +52,7 @@ Compiling everything is done easily using `make`, which simply follows the `Make
 - `./execute -i "<folder you want to analyse>" -c "<location of calo file>"`
 - `./execute -i "<folder you want to analyse>" -c "<location of calo file>" -o <output ROOT file>`
 
-In the first case, the default input file as defined in `GlobalParameters.cxx` is used. The calorimeter data file name is then just set to 'input file name' + `_calo.txt` and the output file name `output/` + 'input file name' + `.root`. This behaviour can be changed in the paramters. Otherwise, you can specify the calo file name and/or the output file name using option `-o` or option `-c` respectively.
+In the first case, the default input file as defined in `GlobalParameters.cxx` is used. The calorimeter data file name is then just set to 'input file name' + `_calo.txt` and the output file name `output/` + 'input file name' + `.root`. This behaviour can be changed in the paramters. Otherwise, you can specify the calo file name and/or the output file name using option `-c` and option `-o` respectively.
 
 If you are on Linux and have no CERN ROOT installed, you will have to install it prior to `make`. For this, you run the shell script `Install CERN ROOT6.sh` (or just read that script as a guide).
 
