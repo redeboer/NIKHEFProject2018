@@ -21,15 +21,11 @@
 	{
 		// Create TTree
 		fTree = new TTree("calo_fits","fit results of calo events");
-		fTree->Branch("energy_sum",   &fEnergySum,   "energy_sum/D",1e6);
-		fTree->Branch("energy_lsp",   &fEnergyLSP,   "energy_lsp/D",1e6);
-		fTree->Branch("energy_landau",&fEnergyLandau,"energy_landau/D",1e6);
-		fTree->Branch("chi2_lsp",     &fChi2LSP,     "chi2_lsp/D",1e6);
-		fTree->Branch("chi2_landau",  &fChi2Landau,  "chi2_landau/D",1e6);
-		fTree->Branch("ndof_lsp",     &fNDoF_LSP,    "ndof_lsp/I",1e6);
-		fTree->Branch("ndof_landau",  &fNDoF_Landau, "ndof_landau/I",1e6);
-		fTree->Branch("chi2norm_lsp",   &fChi2LSP_norm,   "chi2norm_lsp/D",1e6);
-		fTree->Branch("chi2norm_landau",&fChi2Landau_norm,"chi2norm_landau/D",1e6);
+		fTree->Branch("energy_sum",&fEnergySum,"energy_sum/D",1e6);
+		fTree->Branch("energy_fit",&fEnergyFit,"energy_fit/D",1e6);
+		fTree->Branch("chi2",      &fChi2,     "chi2/D",1e6);
+		fTree->Branch("ndof",      &fNDoF,     "ndof/I",1e6);
+		fTree->Branch("chi2norm",  &fChi2_norm,"chi2norm/D",1e6);
 		// Open TFile for calo analysis output
 		pCaloOutputFile = new TFile(pOutputCalo,"RECREATE");
 	}
@@ -57,55 +53,41 @@
 				printf("    Energy (sum): %.0f\n", fEnergySum );
 			}
 			// Fit calo data
-			// Fit(); // (UN)COMMENT THIS IF NO FIT COMPUTATION
-			// output if fit has been performed
-			if( fFitLSP ) {
+			Fit(); // COMMENT THIS IF NO FIT COMPUTATION
+			// Output if fit has been performed
+			if( fFit ) {
 				// Fill fit energy spectrum
 				// Compute tree values: longitudinal shower profile
-				if(fFitLSP) {
-					fChi2LSP   = fFitLSP->GetChisquare();
-					fNDoF_LSP  = fFitLSP->GetNDF();
-					fChi2LSP_norm = fChi2LSP/fNDoF_LSP;
-					fEnergyLSP = fFitLSP->Integral(
-						fHist->GetXaxis()->GetXmin(), // or integrate from start value?
-						fHist->GetXaxis()->GetXmax()
-					);
-				}
-				// Compute tree values: Landau profile
-				if(fLandau) {
-					fChi2Landau  = fLandau->GetChisquare();
-					fNDoF_Landau    = fLandau->GetNDF();
-					fChi2Landau_norm = fChi2Landau/fNDoF_Landau;
-					fEnergyLandau = fLandau->Integral(
-						fHist->GetXaxis()->GetXmin(), // or integrate from start value?
-						fHist->GetXaxis()->GetXmax()
-					);
-				}
+				fChi2 = fFit->GetChisquare();
+				fNDoF = fFit->GetNDF();
+				fChi2_norm = fChi2/fNDoF;
+				fEnergyFit = fFit->Integral(
+					fHist->GetXaxis()->GetXmin(), // or integrate from start value?
+					fHist->GetXaxis()->GetXmax()
+				);
 				// Set fit energy: we choose the longitudinal shower profile for this
-				(*fCaloEventIter)->SetEnergyFit(fEnergyLSP);
+				(*fCaloEventIter)->SetEnergyFit(fEnergyFit);
 				// Debugging output: print fit parameters
 				if(fDebug) {
-					printf("  Energy (LSP): %.0f (%.1f%%)\n", fEnergyLSP,
-						100.*(1.-fEnergySum/fEnergyLSP) );
-					printf("  Energy (Landau): %.0f\n", fEnergyLandau,
-						100.*(1.-fEnergySum/fEnergyLandau) );
+					printf("  Energy (fit): %.0f (%.1f%%)\n", fEnergyFit,
+						100.*(1.-fEnergySum/fEnergyFit) );
 					// run over list of functions and print fit info
 					TList* list = fHist->GetListOfFunctions();
 					TIter next(list);
-					while( (fFitLSP = (TF1*)next()) ) {
+					while( (fFit = (TF1*)next()) ) {
 						if(fDebug) {
-							printf("  Fit function \"%s\"\n", fFitLSP->GetName() );
-							printf("    NDoF:        %.3f\n", fFitLSP->GetNDF() );
-							printf("    Chi squared: %.3f\n", fFitLSP->GetChisquare() ); 
+							printf("  Fit function \"%s\"\n", fFit->GetName() );
+							printf("    NDoF:        %.3f\n", fFit->GetNDF() );
+							printf("    Chi squared: %.3f\n", fFit->GetChisquare() ); 
 							printf("    Parameter 0: %.7f +/- %.7f\n",
-								fFitLSP->GetParameter(0),
-								fFitLSP->GetParError(0) );
+								fFit->GetParameter(0),
+								fFit->GetParError(0) );
 							printf("    Parameter 1: %.5f +/- %.5f\n",
-								fFitLSP->GetParameter(1),
-								fFitLSP->GetParError(1) );
+								fFit->GetParameter(1),
+								fFit->GetParError(1) );
 							printf("    Parameter 2: %.5f +/- %.5f\n",
-								fFitLSP->GetParameter(2),
-								fFitLSP->GetParError(2) );
+								fFit->GetParameter(2),
+								fFit->GetParError(2) );
 						}
 					}
 				}
@@ -145,30 +127,18 @@
 		Int_t i=1;
 		while( fHist->GetBinContent(i) < pTriggerCaloFit ) i++;
 		Double_t startval = fHist->GetBinCenter(i);
-		// Difine fitting function:
-		// (Longitudinal shower profile: "A x^a e^(-bx)")
-		fFitLSP = new TF1("lsp","[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
+		// Define longitudinal shower profile (LSP): "A x^a e^(-bx)"
+		fFit = new TF1("fit","[0]*TMath::Power(x,[1])*TMath::Exp(-[2]*x)",
 			startval, fHist->GetXaxis()->GetXmax() );
-		// (Landau function: "[0]*TMath::Landau(x,[1],[2])")
-		fLandau = new TF1("landau","[0]*TMath::Landau(x,[1],[2])",
-			startval, fHist->GetXaxis()->GetXmax() );
-		fLandau->SetLineColor(kBlue);
 		// Set estimated fit parameters
 		Int_t maxbin = fHist->GetMaximumBin();
 		Double_t maxloc = fHist->GetBinCenter(maxbin);
-		fFitLSP->SetParameters( // longitudinal shower profile
+		fFit->SetParameters(
 			3.5e-9*fHist->GetBinContent(maxbin),
 			4., 1.14e-2
 		);
-		fLandau->SetParameters( // Landau curve
-			5.2*fHist->GetBinContent(maxbin),
-			1.1*maxloc, // location of peak
-			0.3*maxloc  // sigma
-		);
 		// Fit histogram with fit function and compute energy
-		fHist->Fit(fFitLSP,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
-		// fHist->Fit(fLandau,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
-		fHist->GetListOfFunctions()->Add(fFitLSP);
-		fHist->GetListOfFunctions()->Add(fLandau);
+		fHist->Fit(fFit,"QN","",startval,fHist->GetXaxis()->GetXmax()); // comment this line if you want to see if your fit parameter estimates are close
+		fHist->GetListOfFunctions()->Add(fFit);
 		fHist->GetListOfFunctions()->SetOwner(); // so fit will be deleted along with histogram
 	}

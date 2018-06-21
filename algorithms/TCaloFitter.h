@@ -26,10 +26,10 @@ public:
 	// (output written to separate ROOT file)
 	TCaloFitter(TClipboard* cp)
 		: TAlgorithm(cp,"TCaloFitter",false),
-		fHist(NULL), fFitLSP(NULL), fLandau(NULL) {}
+		fHist(NULL), fFit(NULL) {}
 	TCaloFitter(TClipboard* cp, Bool_t debug)
 		: TAlgorithm(cp,"TCaloFitter",false,debug),
-		fHist(NULL), fFitLSP(NULL), fLandau(NULL) {}
+		fHist(NULL), fFit(NULL) {}
 	~TCaloFitter() {}
 
 	// Algorithm step functions
@@ -46,19 +46,14 @@ private:
 	TCaloEventList_t* fCaloEventList;
 	TCaloEventIter_t  fCaloEventIter;
 	// Histogram and fit pointers
-	TH1D* fHist;  // pointer to calo event data histogram
-	TF1* fFitLSP; // longitudinal shower profile
-	TF1* fLandau; // Landau function
+	TH1D* fHist; // pointer to calo event data histogram
+	TF1* fFit; // longitudinal shower profile
 	// Fit results
 	Double_t fEnergySum;
-	Double_t fEnergyLSP;
-	Double_t fEnergyLandau;
-	Double_t fChi2LSP;
-	Double_t fChi2Landau;
-	Double_t fChi2LSP_norm;
-	Double_t fChi2Landau_norm;
-	Int_t fNDoF_LSP;
-	Int_t fNDoF_Landau;
+	Double_t fEnergyFit;
+	Double_t fChi2;
+	Double_t fChi2_norm;
+	Int_t fNDoF;
 
 };
 
