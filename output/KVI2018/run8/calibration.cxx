@@ -100,18 +100,27 @@ void calibration() {
 			++i;
 		}
 	}
+	// Fit functions
+	gr_sum->Fit("pol2","","",0,150);
+	gr_fit->Fit("pol2","","",0,150);
 	// Draw graph in Canvas and save as png
 	TCanvas* c = new TCanvas();
 	gr_sum->Draw("AP");
 	gr_sum->GetXaxis()->SetLimits(0,150);
 	gr_sum->GetYaxis()->SetLimits(0,7e5);
-	// c->Update();
+	gr_sum->GetXaxis()->SetRangeUser(0,150);
+	gr_sum->GetYaxis()->SetRangeUser(0,7e5);
+	gr_sum->Draw("AP");
+	c->Update();
 	c->SaveAs("calibration_sum.png");
 	c->SaveAs("calibration_sum.pdf");
 	gr_fit->Draw("AP");
 	gr_fit->GetXaxis()->SetLimits(0,150);
 	gr_fit->GetYaxis()->SetLimits(0,7e5);
-	// c->Update();
+	gr_fit->GetXaxis()->SetRangeUser(0,150);
+	gr_fit->GetYaxis()->SetRangeUser(0,7e5);
+	gr_fit->Draw("AP");
+	c->Update();
 	c->SaveAs("calibration_fit.png");
 	c->SaveAs("calibration_fit.pdf");
 	delete c;
