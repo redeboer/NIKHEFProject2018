@@ -1,13 +1,15 @@
 # Ignore folder contents
 bin/*
-output/*
+#output/*
 .archive
 .vscode
 .fuse_hidden*
 
 # Ignore binaries
-*.[oa]
+*.[oad]
 *.do
+*.so
+*ACLiC_dict_rdict.pcm
 execute
 
 # Unpacked stuff
