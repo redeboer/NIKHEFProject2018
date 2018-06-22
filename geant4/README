@@ -12,16 +12,16 @@ Without the help of Panagiotis Tsopelas in giving his Geant4 simulation in the b
 
 ## Description of class structure
 
-The folder 'include' has all the .hh files and the 'src' folder has all the .cc files
-These files are connected with each other in pbm.cc
-The 'ROOT' folder holds all the simulation output data and ROOT scripts to analyse this data
+The folder 'include' has all the .hh files and the 'src' folder has all the .cc files.
+These files are connected with each other in pbm.cc.
+The 'ROOT' folder holds all the simulation output data and ROOT scripts to analyse this data.
 
 ## Usage
 
 Compiling everything is done easily using `gmake`, which simply follows the `GNUmakefile` script and compiles pbm.cc. You can then run the executable with or without options, like:
 
 - `pbm` 
-This runs pbm.cc and opens the Qt environment with vis.mac and let's you see the components and the tracks
+This runs pbm.cc and opens the Qt environment with vis.mac and gui.mac and let's you see all the detector components and the tracks.
 
 - `pbm run.mac > <Output file you want to put the data in>`
 This runs run.mac and puts the output of the simulation into the sepcified output file.

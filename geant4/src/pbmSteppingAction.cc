@@ -4,7 +4,7 @@
 
 /* === CLASS DESCRIPTION =======
 	This script deals with taking the particle trough the world iteratively.
-  With each ieration a step is done, from this step you can extract particle information.
+  With each iteration a step is made, from this step you can extract particle information.
   So in general this script is the place to be to extract data from the simulation.
 */
 
