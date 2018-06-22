@@ -120,7 +120,7 @@
 			<< pTotalFiles << " in total" << endl;
 		// Loop over all algorithms and Finalise them
 		FinaliseAll();
-	
+
 	}
 
 	// FINALISE STEP: Finalise all algorithms

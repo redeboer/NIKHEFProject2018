@@ -17,7 +17,7 @@ echo ""
 read -p "Press ENTER if you want to run ./execute on this folder?"
 
 # 
-for f in $Folder*
+for f in $Folder*.txt
 do
 	ifname=${f/$Folder/}
 	echo ""

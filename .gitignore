@@ -1,11 +1,24 @@
 # Ignore folder contents
 bin/*
-output/*
+#output/*
 .archive
 .vscode
 .fuse_hidden*
 
 # Ignore binaries
-*.[oa]
+*.[oad]
 *.do
+*.so
+*ACLiC_dict_rdict.pcm
 execute
+
+# Unpacked stuff
+data/KVI2018/run1_calo.txt
+data/KVI2018/run2_calo.txt
+data/KVI2018/run3_calo.txt
+data/KVI2018/run6_calo.txt
+data/KVI2018/run8/CaloCalibration_1434MeV.txt
+data/KVI2018/run8/CaloCalibration_0294MeV.txt
+data/KVI2018/run8/CaloCalibration_0457MeV.txt
+data/KVI2018/run8/CaloCalibration_0788MeV.txt
+data/KVI2018/run8/CaloCalibration_1036MeV.txt
