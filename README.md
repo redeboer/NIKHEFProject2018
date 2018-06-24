@@ -33,15 +33,17 @@ Now, the cool thing is that, as long as an algorithm passes on passes data throu
 
 ## Description of setup for our project
 
-In 2018, we worked on a setup to analyse a proton beam (the proton beam of the KVI in Groningen). Initially, we planned to work with two TPCs and one calorimeter as to compute scattering angle. The first TPC would be placed in front of the sample (phantom) and second TPC and calorimeter after. The whole setup was to be triggered with a scintillator. Linear tracks in both TPCs would be intersected to reconstruct the point where the scattering took place. (Of course, for charged particles, the scattering does not happen at one point in the phantom, but we wanted to know more about scattering angle.)
+In 2018, we worked on a setup to analyse a proton beam (the proton beam of the KVI in Groningen). Initially, we planned to work with two TPCs and one calorimeter as to compute scattering angle. The first TPC would be placed in front of the sample (phantom) and second TPC and calorimeter after. The whole setup was to be triggered with a scintillator. Linear tracks in both TPCs would be intersected to reconstruct the point where the scattering took place. (Of course, for charged particles, the scattering does not happen at one point in the phantom, but we wanted to know more about the final direction in which the particle is scattered after leaving the phantom.)
 
-In preparation to the data taking, we also performed simulations in Geant. Output of these simulations was also analysed using this framework. The algorithms we developed were therefore loaded in the following way:
+In preparation to the data taking, we also performed simulations of the entire setup in Geant. Output of these simulations was also analysed using this framework. The algorithms we developed were therefore loaded in the following way:
 
 ![Algorithm structure](https://github.com/redeboer/NIKHEFProject2018/blob/master/docs/structure_algorithms.png "Algorithm structure")
 
 The order of processing these algorithms is, of course, sequentially, but the arrows here indicate which altorithms rely on the output of previous ones.
 
 In our project, one of our TPCs unfortunately broke down, so in the end, we were not able to intersect tracks. The TPC after the sample was therefore removed, so the intersecting algorithms became redundant. Also, it turned out to be difficult to properly trigger the remaining TPC, so a the z-component could also not be computed. The output was therefore a 1-dimensional profile of energy loss in the sample.
+
+To make things worse, event the one remaining TPC started to fail when taking data at the KVI. We have therefore not continued developing scripts like the mask generator and loader and have not developed any alignment procedure. We encourage the reader to pick up where we left.
 
 ## Usage
 
