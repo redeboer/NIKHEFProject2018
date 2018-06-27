@@ -1,7 +1,7 @@
 # Author: Remco de Boer
 # Data: 09/06/2018
 
-# Instructions to install CERN's AliRoot on Ubuntu 18.04. See https://alice-doc.github.io/alice-analysis-tutorial/building/ for further instructions.
+# Instructions to install CERN's AliRoot on Ubuntu 18.04, with ROOT5 (this is done to be able to work with PCG software packages). See https://alice-doc.github.io/alice-analysis-tutorial/building/ for further instructions.
 
 # Check if in sudo
 if [ "$EUID" -ne 0 ]
@@ -26,21 +26,21 @@ pip install alibuild --upgrade
 # Download AliRoot
 cd /usr/local/
 mkdir alice
-chown -R $(whoami):$(id -g -n $(whoami)) alice
+chown -R $(whoami):$(id -g -n $(whoami)) alice # change ownership
 cd alice
-aliBuild init AliRoot,AliPhysics # Run 2 software
-aliBuild init O2 --defaults o2 # Run 3 software
+
+# Get AliRoot and AliPhysics from Git through aliBuild
+aliBuild init AliRoot,AliPhysics -z aliroot5 # Run 2 software
+cd aliroot5
+# aliBuild init O2 --defaults o2 # Run 3 software
 
 # Check if prerequisites have been met (DOCTOR)
-aliDoctor AliPhysics --defaults user-root6
-aliDoctor O2 --defaults o2
+aliDoctor AliPhysics --defaults user
+# aliDoctor O2 --defaults o2
 
-# Build AliRoot (BUILD)
-aliBuild build AliPhysics --defaults user-root6
-aliBuild build O2 --defaults o2
-
-# Change ownership
-chown -R $(whoami):$(id -g -n $(whoami)) /usr/local/alice
+# Build AliRoot: use option -d if you want to see debug output
+aliBuild -z -w ../sw build AliPhysics --defaults user # if ROOT6: user-root6
+# aliBuild build O2 --defaults o2 # Run 3 software
 
 # Add lines to bash
 echo "
@@ -48,7 +48,7 @@ echo "
 # AliRoot
 export ALIBUILD_WORK_DIR=\"/usr/local/alice/sw\"
 eval \"\`alienv shell-helper\`\"
-alias ali='alienv enter AliPhysics/latest'" >> ~/.bashrc
+alias ali='alienv enter AliPhysics/latest-aliR00T5-user'" >> ~/.bashrc
 
 # Test installation
 read -p "
