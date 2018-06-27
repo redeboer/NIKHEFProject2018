@@ -13,7 +13,7 @@ bin/*
 execute
 
 # Unpacked stuff
-*.txt
+*.info.txt
 *.dsc
 *.xml
 *_short*
