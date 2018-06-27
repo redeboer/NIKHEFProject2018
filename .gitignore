@@ -13,6 +13,8 @@ bin/*
 execute
 
 # Unpacked stuff
-data/*.txt
-data/*.dsc
-data/*.xml
+*.txt
+*.dsc
+*.xml
+*_short*
+*_int*
