@@ -6,6 +6,7 @@
 
 /* === CLASS DESCRIPTION =======
 	This algorithm is a version of the TCaloLoader2013 for KVI data from 2013. This data was stored in binary (.bin) files and converted to one-per-event-txt files. These txt files (probably) contain data points along a longitudinal shower profile that needs to be integrated to get the accumulated energy in the calorimeter in the event that the txt file describes. These values have to be integrated to obtain the cumulative energy detected by the calorimeter in an event. In this algorithm, this is done by computing the sum of its histogram. There is a seperate algorithm for computing the energy with a fit.
+	NOTE: calo files are read from input folder (argument -i), not from specified calo file (argument -c).
 */
 
 #ifndef TCALOLOADER2013_H

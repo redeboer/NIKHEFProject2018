@@ -6,6 +6,7 @@
 
 /* === CLASS DESCRIPTION =======
 	This algorithm is a version of the TCaloLoader2013 for KVI data from 2013. This data was stored in binary (.bin) files and converted to one-per-event-txt files. These txt files (probably) contain data points along a longitudinal shower profile that needs to be integrated to get the accumulated energy in the calorimeter in the event that the txt file describes. These values have to be integrated to obtain the cumulative energy detected by the calorimeter in an event. In this algorithm, this is done by computing the sum of its histogram. There is a seperate algorithm for computing the energy with a fit.
+	NOTE: calo files are read from input folder (argument -i), not from specified calo file (argument -c).
 */
 
 // === INCLUDES =======
@@ -104,7 +105,7 @@
 	{
 		// Abort if hidden file (starts with '.')
 		if(input.Length()>1&&input(0)=='.') return;
-		//abort if no other folders but only files
+		// Abort if no other folders but only files
 		if(input == '.') return; 
 		// Get pwd and replace with relative path as entered by pInput
 		if(fDebug) cout << "Applying AddFileNames to \"" << fCurrentDir+input << "\"" << endl;
@@ -134,7 +135,7 @@
 	// If input is a zipfile, extract it, store its output folder name, and apply AddFileNames
 	Bool_t TCaloLoader2013::ExtractZipFile(TString input)
 	{
-		if(IsZipFile(input)) {
+		if(input.Contains("_calo") && IsZipFile(input)) {
 			cout << "Extracting \"" << input << "\"" << endl;
 			TString outputfolder(input);
 			RemoveExtension(outputfolder);
@@ -150,15 +151,17 @@
 	Bool_t TCaloLoader2013::LoadCaloEvent(const char* filename)
 	{
 		// Check number of lines
-		OpenFile(fFilestream,pCaloFileName.Data(),fDebug);
+		OpenFile(fFilestream,filename);
 		fNCaloPoints = 0;
 		while(fFilestream>>fValue) ++fNCaloPoints;
+		if(!fNCaloPoints) return false;
+		if(fDebug) cout << "--> Contains " << fNCaloPoints << " calo points" << endl;
 		fFilestream.close();
 		// Create TCaloEvent
 		fCaloEvent = new TCaloEvent(pEventNumber,0,fNCaloPoints);
 		fClipboard->Put(fCaloEvent);
 		// Read all values of calo event (usually 1024)
-		OpenFile(fFilestream,pCaloFileName.Data());
+		OpenFile(fFilestream,filename);
 		Int_t point = 0;
 		while(fFilestream>>fValue) {
 			fCaloEvent->SetValue(point,fValue);
