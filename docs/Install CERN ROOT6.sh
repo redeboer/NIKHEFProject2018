@@ -1,30 +1,30 @@
 # Author: Remco de Boer
-# Data: 19/05/2018
+# Date: November 5th, 2018
 
-# Instructions to install the latest CERN ROOT Production ("Pro") distribution, including Minuit, on Ubuntu. The Pro version was 6.12/06 (2018-02-09) at the time of writing, but the procedure should work as well when later distributions come out.
+# Instructions to install the latest CERN ROOT Production ("Pro") distribution, including Minuit, on Ubuntu. The Pro version is 6.14/04 (2018-08-23) at the time of writing, but the procedure should work as well when later distributions come out.
 
 # You can use these instructions as well as a bash script. Run using:
-# ./Install\ CERN\ ROOT.sh
+# sudo bash Install\ CERN\ ROOT6.sh
 
 # To see which options are used by default, see: https://root.cern.ch/building-root
 
 # Check if in sudo
 if [ "$EUID" -ne 0 ]
-  then echo "Please run as root. To do so, use sudo."
-  exit
+	then echo "Please run as root. To do so, use sudo."
+	exit
 fi
 
 # Decide which version to install
-read -p "This script will install CERN ROOT 6, version 6.12/06. Check out the latest versions at https://root.cern.ch/downloading-root.
+read -p "This script will install CERN ROOT 6, version 6.14/04. Check out the latest versions at https://root.cern.ch/downloading-root.
 
 If you want this version, press enter, otherwise, enter the version you want here: v6-" ROOTVERSION
 if [ -n $ROOTVERSION ]
 then
-	ROOTVERSION="12-06"
+	ROOTVERSION="14-04"
 	echo "--> Installing default version: v6-$ROOTVERSION
 	"
 else
-	echo "--> Installing version: v6-$ROOTVERSION
+	echo "--> Installing your chosen version: v6-$ROOTVERSION
 	"
 fi
 
@@ -36,11 +36,23 @@ apt-get install gfortran libssl-dev libpcre3-dev xlibmesa-glu-dev libglew1.5-dev
 # Clone entire ROOT source from the public Git repository
 cd /usr/local/
 git clone http://github.com/root-project/root.git
+if [ $? != 0 ]; then
+	echo -e "\e[91mERROR: Failed to git-clone \"http://github.com/root-project/root.git\"\e[0m"
+	exit
+fi
 chown -R $(whoami):$(id -g -n $(whoami)) root
+if [ $? != 0 ]; then
+	echo -e "\e[91mERROR: Failed to change ownership\e[0m"
+	exit
+fi
 cd root
 
 # Set the correct release tag
 git checkout -b v6-$ROOTVERSION v6-$ROOTVERSION
+if [ $? != 0 ]; then
+	echo -e "\e[91mERROR: Failed to git-checkout \"v6-$ROOTVERSION\"\e[0m"
+	exit
+fi
 
 # Make a directory in the source folder that will be used for compilation files
 mkdir compile

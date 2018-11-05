@@ -30,8 +30,8 @@ chown -R $(whoami):$(id -g -n $(whoami)) alice # change ownership
 cd alice
 
 # Get AliRoot and AliPhysics from Git through aliBuild
-aliBuild init AliRoot,AliPhysics -z aliroot5 # Run 2 software
-cd aliroot5
+aliBuild init AliRoot,AliPhysics -z AliROOT5 # Run 2 software
+cd AliROOT5
 # aliBuild init O2 --defaults o2 # Run 3 software
 
 # Check if prerequisites have been met (DOCTOR)
@@ -48,7 +48,7 @@ echo "
 # AliRoot
 export ALIBUILD_WORK_DIR=\"/usr/local/alice/sw\"
 eval \"\`alienv shell-helper\`\"
-alias ali='alienv enter AliPhysics/latest-aliR00T5-user'" >> ~/.bashrc
+alias ali='alienv enter AliPhysics/latest-AliROOT5-user'" >> ~/.bashrc
 
 # Test installation
 read -p "
