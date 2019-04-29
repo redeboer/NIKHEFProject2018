@@ -1,9 +1,11 @@
 # Ignore folder contents
-bin/*
-#output/*
+output/*
+**.code-workspace
 .archive
-.vscode
 .fuse_hidden*
+.vscode
+bin/
+data/**/*.txt
 
 # Ignore binaries
 *.[oad]
